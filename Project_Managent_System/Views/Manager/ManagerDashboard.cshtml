@@ -1,0 +1,283 @@
+﻿@{
+    ViewBag.Title = "Manager Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Gradient Text for Header */
+    .text-gradient {
+        background: -webkit-linear-gradient(45deg, var(--primary), var(--primary-dark));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Card Hover Effect */
+    .hover-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+    }
+
+        .hover-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+        }
+
+    /* Custom Input styling to match theme */
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+    }
+</style>
+
+<div class="container-fluid px-4 py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">Dashboard</h3>
+            <p class="text-muted mb-0">
+                Welcome back, <strong>@Session["Name"]</strong>
+                <span class="badge rounded-pill ms-2" style="background-color: var(--accent); font-weight: 500;">
+                    @Session["Role"]
+                </span>
+            </p>
+        </div>
+        <div class="d-none d-md-block text-end">
+            <span class="text-muted small">@DateTime.Now.ToString("MMMM dd, yyyy")</span>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body p-4">
+            <h6 class="fw-bold text-uppercase text-muted small mb-3" style="letter-spacing: 1px;">Filter Data</h6>
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small text-muted">Select Project</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-folder text-primary"></i></span>
+                        <select class="form-select border-start-0 ps-0 bg-light" id="projectId">
+                            <option value="">All Projects</option>
+                            @foreach (var p in ViewBag.Projects as List<SelectListItem>)
+                            {
+                                <option value="@p.Value">@p.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small text-muted">From Date</label>
+                    <input type="date" id="fromDate" class="form-control bg-light" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small text-muted">To Date</label>
+                    <input type="date" id="toDate" class="form-control bg-light" />
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn w-100 text-white fw-semibold"
+                            style="background-color: var(--primary); box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);"
+                            onclick="loadDashboard()">
+                        <i class="bi bi-funnel-fill me-1"></i> Apply
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100 hover-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0">Task Status</h6>
+                        <i class="bi bi-pie-chart-fill text-muted"></i>
+                    </div>
+                    <div style="position: relative; height: 250px;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 h-100 hover-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0">Workload Distribution</h6>
+                        <i class="bi bi-bar-chart-fill text-muted"></i>
+                    </div>
+                    <div style="position: relative; height: 250px;">
+                        <canvas id="projectChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-4 hover-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0">Task Creation Trends</h6>
+                        <i class="bi bi-graph-up-arrow text-muted"></i>
+                    </div>
+                    <div style="position: relative; height: 300px;">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // --- THEME COLORS (Matches CSS Variables) ---
+        const themeColors = {
+            primary: '#6366F1',    // Indigo
+            primaryLight: '#818cf8',
+            accent: '#F43F5E',     // Coral
+            success: '#10B981',    // Mint Green
+            warning: '#F59E0B',    // Amber
+            dark: '#1E293B',       // Slate
+            gridLines: '#e2e8f0'   // Light Gray for chart grids
+        };
+
+        let statusChart, projectChart, timelineChart;
+
+        // Common Chart Options for cleaner look
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+            },
+            layout: { padding: 10 }
+        };
+
+        function loadDashboard() {
+            $.ajax({
+                url: '/Manager/GetDashboardData',
+                type: 'GET',
+                data: {
+                    projectId: $('#projectId').val(),
+                    fromDate: $('#fromDate').val(),
+                    toDate: $('#toDate').val()
+                },
+                success: function (res) {
+
+                    // ===== 1. PIE CHART (Donut Style is more modern) =====
+                    if (statusChart) statusChart.destroy();
+                    const statusCtx = document.getElementById('statusChart').getContext('2d');
+                    statusChart = new Chart(statusCtx, {
+                        type: 'doughnut', // Changed to Doughnut for modern look
+                        data: {
+                            labels: ['Completed', 'In Progress', 'Pending'],
+                            datasets: [{
+                                data: [res.completed, res.inProgress, res.pending],
+                                backgroundColor: [
+                                    themeColors.success, // Completed (Mint)
+                                    themeColors.primary, // In Progress (Indigo)
+                                    themeColors.warning  // Pending (Amber)
+                                ],
+                                borderWidth: 0,
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            ...commonOptions,
+                            cutout: '70%', // Thinner ring
+                            plugins: {
+                                legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle' } }
+                            }
+                        }
+                    });
+
+                    // ===== 2. BAR CHART =====
+                    if (projectChart) projectChart.destroy();
+                    const projectCtx = document.getElementById('projectChart').getContext('2d');
+                    projectChart = new Chart(projectCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: res.projectNames,
+                            datasets: [{
+                                label: 'Total Tasks',
+                                data: res.tasksPerProject,
+                                backgroundColor: themeColors.primary,
+                                borderRadius: 6, // Rounded bars
+                                barThickness: 30, // Thinner, elegant bars
+                            }]
+                        },
+                        options: {
+                            ...commonOptions,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: themeColors.gridLines, borderDash: [5, 5] },
+                                    ticks: { font: { family: 'Inter' } }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { font: { family: 'Inter' } }
+                                }
+                            }
+                        }
+                    });
+
+                    // ===== 3. LINE CHART =====
+                    if (timelineChart) timelineChart.destroy();
+
+                    // Create gradient for line chart
+                    const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+                    let gradient = timelineCtx.createLinearGradient(0, 0, 0, 400);
+                    gradient.addColorStop(0, 'rgba(244, 63, 94, 0.2)'); // Coral low opacity
+                    gradient.addColorStop(1, 'rgba(244, 63, 94, 0)');
+
+                    timelineChart = new Chart(timelineCtx, {
+                        type: 'line',
+                        data: {
+                            labels: res.timelineLabels,
+                            datasets: [{
+                                label: 'Tasks Created',
+                                data: res.timelineData,
+                                borderColor: themeColors.accent, // Coral Line
+                                backgroundColor: gradient,
+                                tension: 0.4, // Smooth curve
+                                pointBackgroundColor: '#fff',
+                                pointBorderColor: themeColors.accent,
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            ...commonOptions,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: themeColors.gridLines },
+                                },
+                                x: {
+                                    grid: { display: false }
+                                }
+                            }
+                        }
+                    });
+                },
+                error: function (err) {
+                    console.error("Error loading dashboard data", err);
+                    // Optional: Show a toast error here
+                }
+            });
+        }
+
+        // Initial Load
+        $(document).ready(function () {
+            loadDashboard();
+        });
+
+    </script>
+}

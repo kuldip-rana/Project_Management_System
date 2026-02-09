@@ -1,0 +1,125 @@
+﻿@model Project_Managent_System.Models.Main_Users
+
+@{
+    ViewBag.Title = "Add Users";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-indigo text-white rounded-3 p-3 me-3 shadow-sm">
+                    <i class="bi bi-person-plus-fill fs-4"></i>
+                </div>
+                <div>
+                    <h2 class="fw-bold text-slate-900 m-0">Add New Employee</h2>
+                    <p class="text-muted small m-0">Create a new account and assign workspace roles.</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-body p-5">
+                    @using (Html.BeginForm("AddUsers", "Admin", FormMethod.Post, new { @class = "needs-validation" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @*<div class="mb-4">
+                            @if (TempData["SuccessMessage"] != null)
+                            {
+                                <div class="alert alert-success border-0 rounded-3 small py-2 shadow-sm">
+                                    <i class="bi bi-check-circle me-2"></i> @TempData["SuccessMessage"]
+                                </div>
+                            }
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <div class="alert alert-danger border-0 rounded-3 small py-2 shadow-sm">
+                                    @Html.ValidationSummary(false, "", new { @class = "mb-0 list-unstyled" })
+                                </div>
+                            }
+                        </div>*@
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-slate-800 small">First Name</label>
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control bg-slate-50 border-0 py-2 rounded-3", placeholder = "John" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-slate-800 small">Last Name</label>
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control bg-slate-50 border-0 py-2 rounded-3", placeholder = "Doe" })
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold text-slate-800 small">Email Address</label>
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control bg-slate-50 border-0 py-2 rounded-3", type = "email", placeholder = "name@company.com" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-slate-800 small">Gender</label>
+                                @Html.DropDownListFor(m => m.Gender, new SelectList(new[] { "Male", "Female", "Other" }), "-- Select --", new { @class = "form-select bg-slate-50 border-0 py-2 rounded-3" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-slate-800 small">System Role</label>
+                                @Html.DropDownListFor(m => m.Role, new SelectList(new[] { "Admin", "Manager", "User" }), "-- Select --", new { @class = "form-select bg-slate-50 border-0 py-2 rounded-3" })
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold text-slate-800 small">Initial Password</label>
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control bg-slate-50 border-0 py-2 rounded-3", placeholder = "••••••••" })
+                            </div>
+
+                            <div class="col-12 mt-5 d-flex gap-3">
+                                <button type="submit" class="btn btn-indigo px-4 py-2 rounded-3 shadow-sm fw-bold flex-grow-1">
+                                    Create Account
+                                </button>
+                                <a href="@Url.Action("ManageUsers", "Admin")" class="btn btn-light px-4 py-2 rounded-3 text-muted border-0 flex-grow-1">
+                                    Cancel
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --indigo: #4F46E5;
+        --slate-50: #f8fafc;
+        --slate-800: #1e293b;
+        --slate-900: #0f172a;
+    }
+
+    body {
+        background-color: #f1f5f9;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .bg-indigo {
+        background-color: var(--indigo) !important;
+    }
+
+    .btn-indigo {
+        background-color: var(--indigo);
+        color: white;
+        border: none;
+    }
+
+        .btn-indigo:hover {
+            background-color: #4338ca;
+            color: white;
+        }
+
+    .form-control:focus, .form-select:focus {
+        background-color: #fff !important;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        border: 1px solid var(--indigo) !important;
+    }
+
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+</style>

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Project_Managent_System.ViewModels.CommentItem>
+
+<div class="chat-wrapper d-flex flex-column h-100">
+    <div id="chatMessages" class="chat-messages flex-grow-1 p-3" style="overflow-y: auto; background-color: #f8fafc; max-height: 70vh;">
+        @if (!Model.Any())
+        {
+            <div class="text-center text-muted mt-5">
+                <i class="bi bi-chat-dots fs-1 opacity-25"></i>
+                <p>No comments yet. Start the conversation!</p>
+            </div>
+        }
+        else
+        {
+            DateTime? lastDate = null;
+            foreach (var item in Model)
+            {
+                // Date Separator (Today/Yesterday)
+                if (lastDate?.Date != item.CreatedAt.Date)
+                {
+                    <div class="text-center my-3">
+                        <span class="badge bg-light text-muted border rounded-pill px-3">
+                            @(item.CreatedAt.Date == DateTime.Today ? "Today" : item.CreatedAt.Date == DateTime.Today.AddDays(-1) ? "Yesterday" : item.CreatedAt.ToString("MMM dd, yyyy"))
+                        </span>
+                    </div>
+                    lastDate = item.CreatedAt;
+                }
+
+                var isMe = item.UserName == Session["UserName"]?.ToString(); // Ensure you set Session["UserName"] on login
+
+                <div class="mb-2 d-flex @(isMe ? "justify-content-end" : "justify-content-start")">
+                    <div class="p-2 px-3 rounded-3 shadow-sm @(isMe ? "bg-primary text-white" : "bg-white border text-dark")" style="max-width: 80%;">
+                        @if (!isMe)
+                        {<div class="fw-bold text-indigo small mb-1">@item.UserName</div>}
+                        <div class="message-text">@item.Message</div>
+                        <div class="d-flex align-items-center justify-content-end gap-1 mt-1 opacity-75" style="font-size: 0.6rem;">
+                            @item.CreatedAt.ToString("hh:mm tt")
+                            @if (isMe)
+                            {<i class="bi bi-check2-all text-info ms-1"></i>}
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="p-3 border-top bg-white">
+        @using (Html.BeginForm("PostComment", "Chat", FormMethod.Post, new { id = "commentForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="TargetId" value="@ViewBag.TargetId" />
+            <input type="hidden" name="ChatType" value="@ViewBag.ChatType" />
+            <div class="input-group bg-light rounded-pill p-1">
+                <input type="text" name="Message" id="chatInput" class="form-control border-0 bg-transparent ps-3" placeholder="Type a message..." required autocomplete="off" />
+                <button type="submit" class="btn btn-primary rounded-circle p-2 ms-2" style="width: 40px; height: 40px;"><i class="bi bi-send-fill"></i></button>
+            </div>
+        }
+    </div>
+</div>

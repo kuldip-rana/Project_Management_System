@@ -1,0 +1,165 @@
+﻿@using System.Linq
+@model IEnumerable<Project_Managent_System.Models.Project>
+
+@{
+    ViewBag.Title = "My Projects";
+}
+
+<style>
+    :root {
+        --indigo-600: #4f46e5;
+        --indigo-700: #4338ca;
+        --slate-50: #f8fafc;
+        --slate-100: #f1f5f9;
+        --slate-600: #475569;
+        --slate-900: #0f172a;
+    }
+
+    body {
+        background-color: var(--slate-50);
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .project-card {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 1.25rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #ffffff;
+    }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+    .icon-box {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: rgba(79, 70, 229, 0.1);
+        color: var(--indigo-600);
+    }
+
+    .status-badge {
+        font-weight: 500;
+        padding: 0.5em 1em;
+        letter-spacing: 0.025em;
+    }
+
+    .btn-saas-primary {
+        background-color: var(--indigo-600);
+        color: white;
+        border: none;
+        font-weight: 500;
+        padding: 0.6rem 1.2rem;
+        transition: background 0.2s;
+    }
+
+        .btn-saas-primary:hover {
+            background-color: var(--indigo-700);
+            color: white;
+        }
+
+    .empty-state {
+        padding: 4rem 2rem;
+        text-align: center;
+        background: white;
+        border-radius: 2rem;
+        border: 2px dashed #e2e8f0;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="page-header d-flex justify-content-between align-items-end">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-2">
+                    <li class="breadcrumb-item"><a href="@Url.Action("UserDashboard", "User")" class="text-decoration-none text-muted">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Projects</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold text-slate-900 m-0">My Active Projects</h2>
+        </div>
+        <div class="text-muted small">
+            Total Projects: <span class="fw-bold text-dark">@Model.Count()</span>
+        </div>
+    </div>
+
+    @if (ViewBag.DebugMessage != null)
+    {
+        <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+            <div>
+                <h6 class="alert-heading fw-bold mb-1">System Report</h6>
+                <span>@ViewBag.DebugMessage</span>
+            </div>
+        </div>
+    }
+
+    @if (ViewBag.EmptyMessage != null || (!Model.Any() && ViewBag.DebugMessage == null))
+    {
+        <div class="empty-state shadow-sm">
+            <div class="icon-box mx-auto mb-3" style="width: 64px; height: 64px;">
+                <i class="bi bi-folder-x fs-2"></i>
+            </div>
+            <h4 class="fw-bold text-slate-900">No projects found</h4>
+            <p class="text-muted mx-auto" style="max-width: 400px;">
+                @(ViewBag.EmptyMessage ?? "You haven't been assigned to any project tasks yet. Once a manager assigns you a task, the project will appear here.")
+            </p>
+        </div>
+    }
+
+    <div class="row g-4">
+        @foreach (var project in Model)
+        {
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card project-card h-100 shadow-sm">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div class="icon-box">
+                                <i class="bi bi-kanban fs-4"></i>
+                            </div>
+                            <span class="badge status-badge rounded-pill
+                                @(project.Status == "Completed" ? "bg-success-subtle text-success" :
+                                  project.Status == "Pending" ? "bg-warning-subtle text-warning-emphasis" :
+                                  "bg-primary-subtle text-primary") border">
+                                @project.Status
+                            </span>
+                        </div>
+
+                        <h5 class="fw-bold text-slate-900 mb-2">@project.ProjectName</h5>
+
+                        <div class="mb-4">
+                            <label class="text-uppercase text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 0.05rem;">Project Lead</label>
+                            <div class="d-flex align-items-center mt-1">
+                                <div class="avatar-sm bg-secondary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px;">
+                                    <i class="bi bi-person text-secondary" style="font-size: 0.8rem;"></i>
+                                </div>
+                                <span class="text-slate-600 small fw-medium">@project.Project_Members</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-3 border-top">
+                            <a href="@Url.Action(
+        "DownloadFullProjectReport",
+        "User",
+        new { id = project.ProjectId }
+    )"
+                               class="btn btn-saas-primary rounded-pill w-100 d-flex align-items-center justify-content-center">
+                                <span>View Details</span>
+                                <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

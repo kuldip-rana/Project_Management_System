@@ -1,0 +1,179 @@
+﻿@model Project_Managent_System.Models.Main_Users
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Scope styles to this view to ensure theme consistency */
+    :root {
+        --primary: #6366F1; /* Indigo */
+        --accent: #F43F5E;  /* Coral */
+    }
+
+    .login-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    /* Icon Circle at top */
+    .brand-icon-circle {
+        width: 60px;
+        height: 60px;
+        background-color: #EEF2FF; /* Light Indigo */
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin: 0 auto 1.5rem auto;
+        font-size: 1.75rem;
+    }
+
+    /* Custom Input Group Styling */
+    .input-group-text {
+        background-color: #F9FAFB;
+        border: 1px solid #E5E7EB;
+        border-right: none;
+        color: #9CA3AF;
+    }
+
+    .form-control {
+        background-color: #F9FAFB;
+        border: 1px solid #E5E7EB;
+        border-left: none;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+
+    /* Focus State - The "Glow" */
+    .form-control:focus {
+        background-color: #fff;
+        box-shadow: none;
+        border-color: var(--primary);
+    }
+
+    .form-control:focus + .input-group-text,
+    .input-group:focus-within .input-group-text {
+        border-color: var(--primary);
+        background-color: #fff;
+        color: var(--primary);
+    }
+
+    .btn-brand {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: white;
+        padding: 0.75rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-brand:hover {
+        background-color: #4F46E5; /* Darker Indigo */
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+    }
+
+    .link-accent {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .link-accent:hover {
+        color: #E11D48; /* Darker Coral */
+        text-decoration: underline;
+    }
+
+    /* Simple Fade In Animation */
+    .fade-in-up {
+        animation: fadeInUp 0.6s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    @@keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="container py-5 min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="col-md-6 col-lg-4 fade-in-up">
+
+        <div class="card login-card bg-white p-4 p-md-5">
+
+            <div class="text-center mb-4">
+                <div class="brand-icon-circle">
+                    <i class="bi bi-layers-fill"></i>
+                </div>
+                <h3 class="fw-bold text-dark">Welcome Back</h3>
+                <p class="text-muted small">Enter your credentials to access your workspace.</p>
+            </div>
+
+            @if (ViewBag.InsertMessage != null)
+            {
+                <div class="alert alert-warning text-center border-0 small shadow-sm mb-4">
+                    @Html.Raw(ViewBag.InsertMessage)
+                </div>
+            }
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger small text-center mb-3 d-block" })
+
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text rounded-start-3"><i class="bi bi-envelope"></i></span>
+                        @Html.TextBoxFor(m => m.Email,
+                            new { @class = "form-control rounded-end-3", placeholder = "name@company.com", type = "email" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small mt-1" })
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label class="form-label small fw-bold text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Password</label>
+                        @* <a href="#" class="small text-muted text-decoration-none">Forgot?</a> *@
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-text rounded-start-3"><i class="bi bi-lock"></i></span>
+                        @Html.PasswordFor(m => m.Password,
+                            new { @class = "form-control rounded-end-3", placeholder = "••••••••" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small mt-1" })
+                </div>
+
+                <div class="d-grid gap-2 mt-5">
+                    <button type="submit" class="btn btn-brand rounded-pill shadow-sm">
+                        Sign In
+                    </button>
+                </div>
+            }
+
+            <div class="text-center mt-4 pt-3 border-top">
+                <p class="small text-muted mb-0">
+                    New to TaskZIP?
+                    @Html.ActionLink("Create an account", "SignUp", "Signup_Login", null, new { @class = "link-accent" })
+                </p>
+            </div>
+        </div>
+
+        <div class="text-center mt-4 text-muted small">
+            &copy; @DateTime.Now.Year TaskZIP. Secure Login.
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

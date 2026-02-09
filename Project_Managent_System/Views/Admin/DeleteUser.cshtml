@@ -1,0 +1,55 @@
+﻿@model Project_Managent_System.Models.Main_Users
+
+@{
+    ViewBag.Title = "Delete Employee";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="bg-danger p-4 text-center text-white">
+                    <i class="bi bi-exclamation-octagon fs-1"></i>
+                    <h3 class="fw-bold m-0 mt-2">Critical Action</h3>
+                </div>
+
+                <div class="card-body p-5">
+                    <p class="text-center text-muted mb-4">
+                        You are about to delete <strong>@Model.FirstName @Model.LastName</strong>.
+                        This will permanently remove their tasks, assignments, and comments.
+                    </p>
+
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.Id)
+
+                        <div class="bg-light p-4 rounded-3 text-center mb-4 border">
+                            <label class="form-label fw-bold text-slate-800 mb-3">
+                                Security Challenge: What is @ViewBag.Num1 + @ViewBag.Num2?
+                            </label>
+                            <input type="number" name="captchaAnswer" class="form-control form-control-lg text-center border-primary mx-auto" style="max-width: 150px;" required placeholder="?" />
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg rounded-3 fw-bold shadow-sm">
+                                Confirm Permanent Deletion
+                            </button>
+                            <a href="@Url.Action("ManageUsers")" class="btn btn-light py-2 text-muted">Cancel and Go Back</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-light {
+        background-color: #f8fafc !important;
+    }
+
+    .shadow-lg {
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+    }
+</style>

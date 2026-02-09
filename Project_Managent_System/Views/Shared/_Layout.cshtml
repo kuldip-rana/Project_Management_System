@@ -1,0 +1,332 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - TaskZIP</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* --- THEME VARIABLES (Modern SaaS) --- */
+        :root {
+            --primary: #6366F1;       /* Indigo */
+            --primary-dark: #4F46E5;  /* Darker Indigo */
+            --primary-light: #EEF2FF; /* Very light Indigo */
+            --accent: #F43F5E;        /* Coral */
+            --sidebar-bg: #1E1B4B;    /* Deep Navy/Indigo Background */
+            --sidebar-width: 260px;
+            --collapsed-width: 70px;
+            --bg-body: #F3F4F6;       /* Light Gray background for content */
+            --text-main: #1F2937;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar-custom {
+            background-color: var(--sidebar-bg);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        #sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            color: #d1d5db;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            padding-top: 20px;
+            transition: all 0.3s ease-in-out;
+            z-index: 1030;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #sidebar.collapsed { width: var(--collapsed-width); }
+
+        .sidebar-header {
+            padding: 0 20px 30px 20px;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .brand-text {
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.5px;
+            margin-left: 12px;
+            transition: opacity 0.3s;
+        }
+
+        #sidebar.collapsed .brand-text { display: none; }
+
+        .nav-list { padding: 0 10px; width: 100%; }
+
+        #sidebar .nav-link {
+            color: #94a3b8;
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        #sidebar .nav-link:hover { background-color: rgba(255, 255, 255, 0.1); color: #fff; }
+
+        #sidebar .nav-link.active {
+            background-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        #sidebar .link-text { margin-left: 12px; font-weight: 500; }
+        #sidebar.collapsed .link-text { display: none; }
+
+        #sidebarToggle { background: none; border: none; color: #fff; font-size: 1.25rem; cursor: pointer; }
+
+        .logout-link { color: var(--accent) !important; font-weight: 600; }
+        .logout-link:hover { background-color: rgba(244, 63, 94, 0.1) !important; }
+
+        .page-wrapper { flex: 1; display: flex; }
+
+        #content { padding: 40px; width: 100%; transition: margin-left 0.3s ease-in-out; }
+
+        @@media (min-width: 768px) {
+            #content.logged-in { margin-left: var(--sidebar-width); }
+            #sidebar.collapsed + .page-wrapper #content.logged-in { margin-left: var(--collapsed-width); }
+        }
+
+        footer {
+            background-color: #fff;
+            color: #6b7280;
+            text-align: center;
+            padding: 15px 0;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            z-index: 1040;
+        }
+
+        /* --- UPDATED COMMENT DRAWER UI --- */
+        #commentDrawer {
+            position: fixed;
+            top: 0;
+            right: -450px; /* Wider for better chat feel */
+            width: 450px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2000; /* Ensure it stays above everything */
+            display: flex;
+            flex-direction: column;
+        }
+
+        #commentDrawer.open { right: 0; }
+
+        .drawer-header {
+            padding: 24px;
+            background-color: var(--sidebar-bg);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow: hidden; /* Prevent body scroll, partial view handles scroll */
+            display: flex;
+            flex-direction: column;
+            background-color: #f8fafc;
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.4); /* Slate-900 overlay */
+            backdrop-filter: blur(2px);
+            display: none;
+            z-index: 1999;
+        }
+
+        .drawer-overlay.active { display: block; }
+    </style>
+</head>
+
+<body>
+
+    @if (Session["UserId"] == null)
+    {
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+            <div class="container">
+                @Html.ActionLink("TaskZIP", "Index", "Home", null, new { @class = "navbar-brand fw-bold fs-3" })
+                <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#guestNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="guestNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item">@Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link" })</li>
+                        <li class="nav-item">@Html.ActionLink("About", "About", "Home", null, new { @class = "nav-link" })</li>
+                        <li class="nav-item">@Html.ActionLink("Contact", "Contact", "Home", null, new { @class = "nav-link" })</li>
+                        <li class="nav-item">@Html.ActionLink("Sign Up", "SignUp", "Signup_Login", null, new { @class = "nav-link fw-bold text-white" })</li>
+                        <li class="nav-item">@Html.ActionLink("Login", "Login", "Signup_Login", null, new { @class = "btn btn-light text-primary fw-bold ms-2 rounded-pill px-4" })</li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="page-wrapper" style="margin-top: 70px;">
+            <div id="content">@RenderBody()</div>
+        </div>
+    }
+    else
+    {
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <button id="sidebarToggle"><i class="bi bi-list"></i></button>
+                <span class="brand-text fs-4">TaskZIP</span>
+            </div>
+            <ul class="nav flex-column nav-list">
+                @if (Session["Role"]?.ToString() == "Manager")
+                {
+                    <li class="nav-item"><a href="@Url.Action("ManagerDashboard", "Manager")" class="nav-link active"><i class="bi bi-speedometer2 fs-5"></i> <span class="link-text">Dashboard</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("CreateProject", "Manager")" class="nav-link"><i class="bi bi-folder-plus fs-5"></i> <span class="link-text">Create Project</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("CreateTask", "Tasks")" class="nav-link"><i class="bi bi-pencil-square fs-5"></i> <span class="link-text">Create Task</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("AssignTask", "Tasks")" class="nav-link"><i class="bi bi-person-plus fs-5"></i> <span class="link-text">Assign Task</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("ReAssignTask", "Tasks")" class="nav-link"><i class="bi bi-arrow-repeat fs-5"></i> <span class="link-text">Reassign Task</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("DisplayProjects", "Manager")" class="nav-link"><i class="bi bi-folder2-open fs-5"></i> <span class="link-text">View Projects</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("DisplayTaskList", "Tasks")" class="nav-link"><i class="bi bi-card-checklist fs-5"></i> <span class="link-text">View Tasks</span></a></li>
+                }
+                else if (Session["Role"]?.ToString() == "Admin")
+                {
+                    <li class="nav-item"><a href="@Url.Action("AdminDashboard", "Admin")" class="nav-link active"><i class="bi bi-speedometer2 fs-5"></i> <span class="link-text">Dashboard</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("ManageUsers", "Admin")" class="nav-link"><i class="bi bi-person-plus fs-5"></i> <span class="link-text">Manage Users</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("ManageProjects", "Admin")" class="nav-link"><i class="bi bi-folder-plus fs-5"></i> <span class="link-text">Manage Projects</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("ManageTasks", "Admin")" class="nav-link"><i class="bi bi-pencil-square fs-5"></i> <span class="link-text">Manage Task</span></a></li>
+                }
+                else if (Session["Role"]?.ToString() == "User")
+                {
+                    <li class="nav-item"><a href="@Url.Action("UserDashboard", "User")" class="nav-link active"><i class="bi bi-speedometer2 fs-5"></i> <span class="link-text">Dashboard</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("MyTasks", "User")" class="nav-link"><i class="bi bi-folder-plus fs-5"></i> <span class="link-text">My Assignments</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("UserTaskReport", "User")" class="nav-link"><i class="bi bi-person-plus fs-5"></i> <span class="link-text">Task Report</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("MyProjects", "User")" class="nav-link"><i class="bi bi-pencil-square fs-5"></i> <span class="link-text">My Projects</span></a></li>
+                }
+                <li class="mt-auto mb-3">
+                    <a href="@Url.Action("Logout", "Signup_Login")" class="nav-link logout-link">
+                        <i class="bi bi-box-arrow-right fs-5"></i> <span class="link-text">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="page-wrapper">
+            <div id="content" class="logged-in">
+                <div class="container-fluid">@RenderBody()</div>
+            </div>
+        </div>
+
+        <div class="drawer-overlay" id="drawerOverlay"></div>
+        <div id="commentDrawer">
+            <div class="drawer-header">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-chat-dots me-2"></i> Discussion</h5>
+                <button class="btn-close btn-close-white" onclick="closeComments()"></button>
+            </div>
+            <div class="drawer-body" id="drawerBody">
+                <div class="text-center mt-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 text-muted">Loading thread...</p>
+                </div>
+            </div>
+        </div>
+    }
+
+    <footer>
+        &copy; @DateTime.Now.Year - TaskZIP | Managed Project System
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    
+    <script>
+        $('#sidebarToggle').click(function () {
+            $('#sidebar').toggleClass('collapsed');
+            $('body').toggleClass('sidebar-is-collapsed');
+        });
+
+        function openComments(id, type) {
+            $('#commentDrawer').addClass('open');
+            $('#drawerOverlay').addClass('active');
+
+            var headerTitle = (type === 'Project') ? 'Project Chat' : 'Task Chat';
+            $('#commentDrawer .drawer-header h5').html('<i class="bi bi-chat-dots-fill me-2"></i>' + headerTitle);
+            $('#drawerBody').html('<div class="d-flex flex-column align-items-center justify-content-center h-100"><div class="spinner-border text-primary mb-3"></div><p class="text-muted">Loading conversation...</p></div>');
+
+            $.ajax({
+                url: '/Chat/GetThread',
+                type: 'GET',
+                data: { id: id, type: type },
+                cache: false,
+                success: function (data) {
+                    $('#drawerBody').html(data);
+                    scrollToBottom();
+                },
+                error: function (xhr) {
+                    $('#drawerBody').html('<div class="p-4 text-center text-danger"><i class="bi bi-exclamation-circle fs-1"></i><p class="mt-2">Error loading chat.</p></div>');
+                }
+            });
+        }
+
+        $(document).on('submit', '#commentForm', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    $('#drawerBody').html(response);
+                    scrollToBottom();
+                }
+            });
+        });
+
+        function scrollToBottom() {
+            var chatDiv = document.getElementById('chatMessages');
+            if (chatDiv) chatDiv.scrollTop = chatDiv.scrollHeight;
+        }
+
+        function closeComments() {
+            $('#commentDrawer').removeClass('open');
+            $('#drawerOverlay').removeClass('active');
+        }
+
+        $('#drawerOverlay').click(closeComments);
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

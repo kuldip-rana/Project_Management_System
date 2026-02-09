@@ -1,0 +1,365 @@
+﻿@using System.Linq
+@using System.Collections.Generic
+@model Project_Managent_System.Models.Project
+
+@{
+    Layout = null; // Essential for Rotativa PDF generation
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Project Report - @Model.ProjectName</title>
+
+    <style>
+        /* --- GLOBAL RESET --- */
+        body {
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            color: #1e293b;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 40px 40px 60px 40px;
+            background: #fff;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3, h4 {
+            margin: 0;
+            padding: 0;
+            font-weight: 700;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+        }
+
+        .text-primary {
+            color: #4F46E5;
+        }
+
+        .text-muted {
+            color: #64748b;
+        }
+
+        /* --- HEADER --- */
+        .header-table {
+            width: 100%;
+            border-bottom: 2px solid #4F46E5;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .company-name {
+            font-size: 24px;
+            color: #1e293b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .report-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #64748b;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        /* --- SUMMARY BOX --- */
+        .summary-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+        .project-title {
+            font-size: 28px;
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+
+        .project-id {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .info-table td {
+                vertical-align: top;
+                padding: 8px 0;
+            }
+
+        .label-cell {
+            width: 120px;
+            color: #64748b;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .value-cell {
+            color: #334155;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* --- STATUS PILLS --- */
+        .status-pill {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fcd34d;
+        }
+
+        .status-inprocess {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .status-completed {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #6ee7b7;
+        }
+
+        /* --- DATA TABLE --- */
+        .section-header {
+            font-size: 16px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4F46E5;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            margin-top: 30px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+            .data-table th {
+                background-color: #f1f5f9;
+                color: #475569;
+                text-transform: uppercase;
+                font-size: 11px;
+                padding: 10px;
+                text-align: left;
+                border-bottom: 2px solid #e2e8f0;
+            }
+
+            .data-table td {
+                padding: 10px;
+                border-bottom: 1px solid #f1f5f9;
+                font-size: 12px;
+            }
+
+        /* --- FOOTER --- */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background-color: #fff;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+            font-size: 10px;
+            color: #94a3b8;
+        }
+
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .footer-left {
+            text-align: left;
+            width: 50%;
+        }
+
+        .footer-right {
+            text-align: right;
+            width: 50%;
+        }
+
+        .page-break {
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+
+<body>
+
+    <table class="header-table">
+        <tr>
+            <td valign="middle">
+                <img src="@Server.MapPath("~/uploads/images/logo.png")" height="45" style="vertical-align: middle; margin-right: 15px;" alt="Logo" />
+                <div class="company-name">
+                    <span>Task</span><span class="text-primary" style="margin-left: 1px;">Zip</span>
+                </div>
+            </td>
+            <td valign="middle" align="right">
+                <div class="report-label">Project Master Report</div>
+                <div style="font-size: 11px; color: #94a3b8;">Generated on @DateTime.Now.ToString("MMM dd, yyyy")</div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="summary-box">
+        <h1 class="project-title">@Model.ProjectName</h1>
+        <span class="project-id">Project ID: #@Model.ProjectId</span>
+
+        <table class="info-table">
+            <tr>
+                <td width="50%">
+                    <table width="100%">
+                        <tr>
+                            <td class="label-cell">Start Date</td>
+                            <td class="value-cell">@Model.StartDate.ToString("MMMM dd, yyyy")</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">Target End</td>
+                            <td class="value-cell">@Model.EndDate.ToString("MMMM dd, yyyy")</td>
+                        </tr>
+                    </table>
+                </td>
+                <td width="50%">
+                    <table width="100%">
+                        <tr>
+                            <td class="label-cell">Current Status</td>
+                            <td class="value-cell">
+                                @{
+                                    string statusClass = "status-pending";
+                                    if (Model.Status == "InProcess") { statusClass = "status-inprocess"; }
+                                    if (Model.Status == "Completed") { statusClass = "status-completed"; }
+                                }
+                                <span class="status-pill @statusClass">@Model.Status</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">Project Lead</td>
+                            <td class="value-cell">@Model.Project_Members</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="page-break">
+        <div class="section-header">Project Scope & Description</div>
+        <div class="description-content" style="color: #334155; line-height: 1.7;">
+            @if (string.IsNullOrEmpty(Model.Description))
+            {
+                <p style="color: #94a3b8; font-style: italic;">No description provided for this project.</p>
+            }
+            else
+            {
+                @Html.Raw(Model.Description)
+            }
+        </div>
+    </div>
+
+    <div class="page-break">
+        <div class="section-header">Granular Task Breakdown</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Task Descriptor</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    @*<th>Assignees</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var task in Model.Tasks)
+                {
+                    <tr>
+                        <td style="font-weight: 600; color: #1e293b;">@task.TaskTitle</td>
+                        <td>
+                            <span style="font-weight:bold; color: @(task.Priority == "High" ? "#ef4444" : "#4F46E5")">@task.Priority</span>
+                        </td>
+                        <td>
+                            @{
+                                string taskStatusClass = "status-inprocess";
+                                if (task.Status == "Completed") { taskStatusClass = "status-completed"; }
+                            }
+                            <span class="status-pill @taskStatusClass" style="font-size: 10px; padding: 2px 8px;">@task.Status</span>
+                        </td>
+                        <td>@task.DueDate.ToString("dd MMM yyyy")</td>
+                        @*<td style="font-size: 11px; color: #64748b;">
+                            @{
+                                int currentUserId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
+                                bool isMe = task.Task_Assignments != null && task.Task_Assignments.Any(a => a.UserId == currentUserId);
+                            }
+                            @if (isMe)
+                            {
+                                <span class="text-primary" style="font-weight: bold;">● Assigned to Me</span>
+                            }
+                            else if (task.Task_Assignments != null && task.Task_Assignments.Any())
+                            {
+                                @string.Join(", ", task.Task_Assignments.Select(a => a.Main_Users.FirstName + " " + a.Main_Users.LastName))
+                            }
+                            else
+                            {
+                                <span>Unallocated</span>
+                            }
+                        </td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="page-break" style="margin-top: 40px;">
+        <table width="100%">
+            <tr>
+                <td width="40%" style="border-top: 1px solid #333; padding-top: 8px;">
+                    <span class="label-cell">Prepared By</span><br />
+                    <span class="value-cell">@Model.Project_Members</span>
+                </td>
+                <td width="20%"></td>
+                <td width="40%" style="border-top: 1px solid #ccc; padding-top: 8px;">
+                    <span class="label-cell">Approved By</span><br />
+                    <span class="value-cell" style="color:#ccc;">(Signature)</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <table class="footer-table">
+            <tr>
+                <td class="footer-left">Property of TaskZip Technologies Pvt. Ltd.</td>
+                <td class="footer-right">Confidential | &copy; @DateTime.Now.Year</td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>

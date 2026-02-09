@@ -1,0 +1,229 @@
+﻿@model IEnumerable<Project_Managent_System.Models.Task_Assignments>
+
+@{
+    ViewBag.Title = "Task Console";
+}
+
+<div class="container-fluid py-4 px-4">
+    @Html.AntiForgeryToken()
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-slate-900 m-0">Task Console</h2>
+            <p class="text-muted small">Manage your active assignments and project discussions</p>
+        </div>
+        <div class="d-flex gap-2">
+            <span class="badge bg-indigo-soft text-indigo px-3 py-2 rounded-pill">
+                @Model.Count(a => a.TaskStatus != "Completed") Active Tasks
+            </span>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+            <i class="bi bi-inbox text-light mb-3" style="font-size: 3rem;"></i>
+            <h5 class="text-secondary">Your queue is empty</h5>
+            <p class="text-muted">New assignments will appear here automatically.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3 text-uppercase fs-xs fw-bold text-muted">Task Details</th>
+                            <th class="py-3 text-uppercase fs-xs fw-bold text-muted">Project</th>
+                            <th class="py-3 text-uppercase fs-xs fw-bold text-muted">Priority</th>
+                            <th class="py-3 text-uppercase fs-xs fw-bold text-muted">Due Date</th>
+                            <th class="py-3 text-uppercase fs-xs fw-bold text-muted" style="width: 250px;">Status Update</th>
+                            <th class="pe-4 py-3 text-center text-uppercase fs-xs fw-bold text-muted">Discussion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold text-slate-900">@item.Task.TaskTitle</div>
+                                    <div class="text-muted fs-xs">ID: #T-@item.TaskId</div>
+                                </td>
+                                <td><span class="text-slate-700 fw-medium">@item.Task.Project.ProjectName</span></td>
+                                <td>
+                                    <span class="badge @(item.Task.Priority == "High" ? "bg-danger-subtle text-danger" : "bg-primary-subtle text-primary") rounded-pill px-2">
+                                        @item.Task.Priority
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="@(item.Task.DueDate < DateTime.Now && item.TaskStatus != "Completed" ? "text-danger fw-bold" : "text-slate-600")">
+                                        @item.Task.DueDate.ToString("MMM dd, yyyy")
+                                    </div>
+                                </td>
+                                <td>
+                                    @using (Html.BeginForm("UpdateTaskStatus", "User", FormMethod.Post, new { @class = "d-flex gap-2" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="assignmentId" value="@item.Id" />
+                                        <select name="newStatus" class="form-select form-select-sm rounded-3">
+                                            <option value="Pending" @(item.TaskStatus == "Pending" ? "selected" : "")>Pending</option>
+                                            <option value="In Progress" @(item.TaskStatus == "In Progress" ? "selected" : "")>In Progress</option>
+                                            <option value="Completed" @(item.TaskStatus == "Completed" ? "selected" : "")>Completed</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-indigo px-3 rounded-3">Update</button>
+                                    }
+                                </td>
+                                <td class="pe-4 text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="@Url.Action("ViewTaskDetails", "User", new { id = item.TaskId })"
+                                           class="btn btn-sm btn-light-secondary rounded-circle shadow-sm text-secondary"
+                                           title="View Full Details">
+                                            <i class="bi bi-card-list"></i>
+                                        </a>
+
+                                        <button class="btn btn-sm btn-light-indigo rounded-circle shadow-sm"
+                                                data-bs-toggle="offcanvas"
+                                                data-bs-target="#offcanvasComments"
+                                                onclick="loadComments(@item.TaskId)"
+                                                title="Open Discussion">
+                                            <i class="bi bi-chat-left-text-fill"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@* Sidebar - Simplified: No duplicate input field here *@
+<div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="offcanvasComments" style="width: 420px; border-radius: 24px 0 0 24px;">
+    <div class="offcanvas-header bg-white border-bottom py-4 px-4">
+        <h5 class="offcanvas-title fw-bold text-slate-900"><i class="bi bi-chat-dots-fill me-2 text-indigo"></i>Task Discussion</h5>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column bg-slate-50 p-0">
+        <div id="commentsContainer" class="h-100">
+            @* The PartialView _CommentThread.cshtml loads here *@
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --indigo: #4F46E5;
+        --indigo-hover: #4338ca;
+        --slate-50: #f8fafc;
+        --slate-900: #0f172a;
+    }
+
+    .btn-light-secondary {
+        background: #f1f5f9;
+        color: #64748b;
+        border: none;
+    }
+
+        .btn-light-secondary:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+    .btn-indigo {
+        background: var(--indigo);
+        color: #fff;
+        border: none;
+    }
+
+        .btn-indigo:hover {
+            background: var(--indigo-hover);
+            color: #fff;
+        }
+
+    .btn-light-indigo {
+        background: #eef2ff;
+        color: var(--indigo);
+        border: none;
+    }
+
+    .bg-indigo-soft {
+        background: #eef2ff;
+    }
+
+    .text-indigo {
+        color: var(--indigo);
+    }
+
+    .fs-xs {
+        font-size: 0.75rem;
+    }
+
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let activeTaskId = 0;
+
+    function loadComments(taskId) {
+        activeTaskId = taskId;
+        const container = $('#commentsContainer');
+
+        // Show Loading
+        container.html('<div class="text-center py-5"><div class="spinner-border text-indigo"></div><p class="text-muted small mt-2">Loading messages...</p></div>');
+
+        $.ajax({
+            url: '@Url.Action("GetTaskComments", "User")',
+            type: 'GET',
+            data: { id: taskId },
+            success: function (data) {
+                container.html(data);
+
+                // 1. Re-bind the form inside the newly loaded HTML
+                bindPartialViewForm();
+
+                // 2. Scroll to bottom
+                const chatDiv = document.getElementById('chatMessages');
+                if (chatDiv) {
+                    chatDiv.scrollTop = chatDiv.scrollHeight;
+                }
+            },
+            error: function (xhr) {
+                container.html('<div class="alert alert-danger m-3">Error ' + xhr.status + ': Could not load discussion.</div>');
+            }
+        });
+    }
+
+    function bindPartialViewForm() {
+        // Find the form that was just loaded via AJAX
+        $('#commentForm').off('submit').on('submit', function (e) {
+            e.preventDefault();
+            const form = $(this);
+            const btn = form.find('button');
+
+            btn.prop('disabled', true); // Prevent double-clicks
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        loadComments(activeTaskId); // Reload the list
+                    } else {
+                        alert(response.message);
+                        btn.prop('disabled', false);
+                    }
+                },
+                error: function () {
+                    alert("Network error while sending message.");
+                    btn.prop('disabled', false);
+                }
+            });
+        });
+    }
+</script>

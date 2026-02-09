@@ -1,0 +1,131 @@
+﻿@model Project_Managent_System.Models.Task
+
+@{
+    ViewBag.Title = "Task Report";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // adjust if needed
+}
+
+<style>
+    .report-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 25px;
+        background: #fff;
+    }
+
+    .report-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .report-subtitle {
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .info-value {
+        color: #212529;
+    }
+
+    .badge-priority {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-top: 25px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 5px;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="report-card">
+
+        <!-- Header -->
+        <div class="mb-4">
+            <div class="report-title">Task Report</div>
+            <div class="report-subtitle">
+                Project: <strong>@Model.Project.ProjectName</strong>
+            </div>
+        </div>
+
+        <!-- Task Info -->
+        <div class="section-title">Task Information</div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="info-label">Task Title</div>
+                <div class="info-value">@Model.TaskTitle</div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-label">Assigned To</div>
+                <div class="info-value">@Model.Main_Users.FirstName</div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="info-label">Priority</div>
+                <span class="badge bg-warning text-dark badge-priority">
+                    @Model.Priority
+                </span>
+            </div>
+            <div class="col-md-6">
+                <div class="info-label">Status</div>
+                <span class="badge bg-info text-dark badge-priority">
+                    @Model.Status
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="section-title">Description</div>
+
+        <div class="text-muted task-description">
+            @Html.Raw(Model.TaskDescription)
+        </div>
+
+        <!-- Dates -->
+        <div class="section-title">Timeline</div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="info-label">Start Date</div>
+                <div class="info-value">@Model.StartDate.ToString("dd MMM yyyy")</div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-label">Due Date</div>
+                <div class="info-value">@Model.DueDate.ToString("dd MMM yyyy")</div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-label">Last Updated</div>
+                <div class="info-value">@Model.UpdatedAt?.ToString("dd MMM yyyy")</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <hr />
+
+        <div class="d-flex justify-content-between">
+            <small class="text-muted">
+                Created on: @Model.CreatedAt.ToString("dd MMM yyyy")
+            </small>
+
+            <div>
+                @Html.ActionLink("Edit Task", "EditTask", new { id = Model.TaskId }, new { @class = "btn btn-sm btn-primary" })
+                @Html.ActionLink("Back to List", "DisplayTaskList", null, new { @class = "btn btn-sm btn-secondary ms-2" })
+            </div>
+        </div>
+
+    </div>
+</div>

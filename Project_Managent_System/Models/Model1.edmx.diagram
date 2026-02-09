@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="2a9e96fea5f6484baf8ee3c0200acc47" Name="Diagram1" ZoomLevel="80">
+        <EntityTypeShape EntityType="PMS_DatabaseModel.Main_Users" Width="1.5" PointX="0.875" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="PMS_DatabaseModel.Project" Width="1.5" PointX="8.625" PointY="0.75" />
+        <EntityTypeShape EntityType="PMS_DatabaseModel.ProjectUser" Width="1.5" PointX="11.75" PointY="1.25" />
+        <AssociationConnector Association="PMS_DatabaseModel.FK_ProjectUser_Main_Users" />
+        <AssociationConnector Association="PMS_DatabaseModel.FK_ProjectUser_Projects" />
+        <EntityTypeShape EntityType="PMS_DatabaseModel.Task_Assignments" Width="1.5" PointX="6.75" PointY="7.25" />
+        <EntityTypeShape EntityType="PMS_DatabaseModel.Task" Width="1.5" PointX="4" PointY="0.75" />
+        <AssociationConnector Association="PMS_DatabaseModel.FK_TaskAssignments_User" ManuallyRouted="false" >
+        </AssociationConnector>
+        <AssociationConnector Association="PMS_DatabaseModel.FK_Tasks_manager_" />
+        <AssociationConnector Association="PMS_DatabaseModel.FK_Task_Projects_" />
+        <AssociationConnector Association="PMS_DatabaseModel.FK_TaskAssignments_Task_" />
+        <EntityTypeShape EntityType="PMS_DatabaseModel.Comment" Width="1.5" PointX="4.25" PointY="5.375" />
+        <AssociationConnector Association="PMS_DatabaseModel.FK_Comments_Project" />
+        <AssociationConnector Association="PMS_DatabaseModel.FK_Comments_Task" />
+        <AssociationConnector Association="PMS_DatabaseModel.FK_Comments_Users" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,221 @@
+﻿@model Project_Managent_System.Models.Project
+
+@{
+    ViewBag.Title = "Edit Project";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Scope styles to this view */
+    :root {
+        --primary: #6366F1;
+        --bg-light: #F9FAFB;
+        --border-color: #E5E7EB;
+    }
+
+    .form-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Custom Input Styling */
+    .form-label {
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #374151; /* Gray-700 */
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border-color: var(--border-color);
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Readonly inputs look distinct */
+        .form-control[readonly] {
+            background-color: #F3F4F6;
+            color: #6B7280;
+            cursor: not-allowed;
+        }
+
+    /* File Upload Area */
+    .file-upload-wrapper {
+        border: 2px dashed var(--border-color);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.2s;
+        background-color: #fff;
+    }
+
+        .file-upload-wrapper:hover {
+            border-color: var(--primary);
+            background-color: #EEF2FF; /* Very light indigo */
+        }
+
+    /* Current File Badge */
+    .current-file-card {
+        background-color: #F0FDFA; /* Light Teal */
+        border: 1px solid #CCFBF1;
+        color: #0F766E;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="container-fluid px-4 py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <a href="@Url.Action("DisplayProjects", "Manager")" class="text-decoration-none text-muted small fw-bold mb-1 d-block">
+                        <i class="bi bi-arrow-left"></i> Back to Projects
+                    </a>
+                    <h3 class="fw-bold text-dark m-0">Edit Project</h3>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-light text-secondary border">ID: #@Model.ProjectId</span>
+                </div>
+            </div>
+
+            <div class="card form-card bg-white">
+                <div class="card-body p-4 p-md-5">
+
+                    @using (Html.BeginForm("EditProject", "Manager", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger mb-4" })
+                        @Html.HiddenFor(m => m.ProjectId)
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-12">
+                                @Html.LabelFor(m => m.ProjectName, "Project Name", new { @class = "form-label" })
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-folder"></i></span>
+                                    @Html.TextBoxFor(m => m.ProjectName, new { @class = "form-control border-start-0 ps-0", placeholder = "Enter project title" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.ProjectName, "", new { @class = "text-danger small mt-1" })
+                            </div>
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.StartDate, "Start Date", new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                                @Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger small mt-1" })
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.EndDate, "End Date", new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                                @Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "text-danger small mt-1" })
+                            </div>
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                @Html.LabelFor(m => m.Status, "Current Status", new { @class = "form-label" })
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-activity"></i></span>
+                                    @Html.DropDownListFor(
+                                        m => m.Status,
+                                        new SelectList(new[] { "Pending", "InProcess", "Completed" }, Model.Status),
+                                        "-- Select Status --",
+                                        new { @class = "form-select border-start-0 ps-0" }
+                                    )
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger small mt-1" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Project Leader <span class="badge bg-secondary ms-1" style="font-size: 0.6em;">READ ONLY</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person-lock"></i></span>
+                                    <input type="text" class="form-control border-start-0 ps-0" value="@Model.Project_Members" readonly />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            @Html.LabelFor(m => m.Description, "Project Description", new { @class = "form-label" })
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 6, id = "editor" })
+                            @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger small mt-1" })
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="form-label">Project Documents</label>
+
+                            @if (!string.IsNullOrEmpty(Model.Project_Document))
+                            {
+                                <div class="current-file-card">
+                                    <i class="bi bi-file-earmark-pdf-fill fs-4"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="small fw-bold text-uppercase opacity-75">Current File</div>
+                                        <div class="fw-semibold text-truncate">@Model.Project_Document</div>
+                                    </div>
+                                    <span class="badge bg-white text-teal border">Active</span>
+                                </div>
+                            }
+
+                            <div class="file-upload-wrapper">
+                                <div class="mb-2">
+                                    <i class="bi bi-cloud-arrow-up text-primary fs-3"></i>
+                                </div>
+                                <label for="fileInput" class="fw-bold text-dark" style="cursor:pointer;">
+                                    <span>Click to replace file</span>
+                                </label>
+                                <input type="file" name="ProjectDocument" id="fileInput" class="form-control mt-2 w-75 mx-auto" accept="application/pdf" />
+                                <div class="small text-muted mt-2">PDF files only (Max 3MB)</div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 text-muted opacity-25" />
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="@Url.Action("DisplayProjects", "Manager")" class="btn btn-light text-muted fw-semibold px-4">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm" style="background-color: var(--primary); border: none;">
+                                Save Changes
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
+            })
+            .catch(error => console.error(error));
+    </script>
+
+    <style>
+        .ck-editor__editable_inline {
+            min-height: 200px;
+            border-bottom-left-radius: 0.5rem !important;
+            border-bottom-right-radius: 0.5rem !important;
+        }
+
+        .ck-toolbar {
+            border-top-left-radius: 0.5rem !important;
+            border-top-right-radius: 0.5rem !important;
+        }
+    </style>
+}

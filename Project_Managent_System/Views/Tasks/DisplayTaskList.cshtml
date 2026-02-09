@@ -1,0 +1,300 @@
+﻿@model IEnumerable<Project_Managent_System.Models.Task>
+@using System.Linq
+
+@{
+    ViewBag.Title = "Task List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* --- THEME VARIABLES (Scoped) --- */
+    :root {
+        --primary: #6366F1; /* Indigo */
+        --primary-soft: #EEF2FF;
+        --success: #10B981; /* Mint */
+        --success-soft: #ECFDF5;
+        --warning: #F59E0B; /* Amber */
+        --warning-soft: #FFFBEB;
+        --danger: #EF4444; /* Red */
+        --danger-soft: #FEF2F2;
+        --text-muted: #64748B;
+        --border-color: #E2E8F0;
+    }
+
+    /* --- TABLE STYLING --- */
+    .saas-card {
+        border: none;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border-radius: 12px;
+        background: #fff;
+        overflow: hidden;
+    }
+
+    .saas-table thead th {
+        background-color: #F8FAFC;
+        color: #475569;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 1.5rem;
+    }
+
+    .saas-table tbody td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #F1F5F9;
+        color: #334155;
+        font-size: 0.9rem;
+    }
+
+    .saas-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .saas-table tbody tr:hover {
+        background-color: #F8FAFC;
+    }
+
+    /* --- BADGES (Soft Style) --- */
+    .badge-soft {
+        padding: 0.35em 0.8em;
+        font-size: 0.75em;
+        font-weight: 600;
+        border-radius: 6px;
+        letter-spacing: 0.3px;
+    }
+
+    .badge-soft-high {
+        background-color: var(--danger-soft);
+        color: var(--danger);
+    }
+
+    .badge-soft-med {
+        background-color: var(--warning-soft);
+        color: var(--warning);
+    }
+
+    .badge-soft-low {
+        background-color: var(--success-soft);
+        color: var(--success);
+    }
+
+    .badge-soft-primary {
+        background-color: var(--primary-soft);
+        color: var(--primary);
+    }
+
+    .badge-soft-secondary {
+        background-color: #F1F5F9;
+        color: var(--text-muted);
+    }
+
+    /* --- ACTION BUTTONS --- */
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        border-radius: 6px;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        background: transparent;
+    }
+
+        .btn-action:hover {
+            background-color: #F1F5F9;
+            color: var(--primary);
+        }
+
+    .btn-action-danger:hover {
+        background-color: #FEF2F2;
+        color: var(--danger);
+    }
+</style>
+
+<div class="container-fluid px-4 py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">Task List</h3>
+            <p class="text-muted small mb-0">Manage assignments and track progress.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="@Url.Action("ManagerDashboard", "Manager")" class="btn btn-light border text-muted fw-medium">Back</a>
+            <a href="@Url.Action("CreateTask", "Tasks")" class="btn btn-primary fw-bold shadow-sm" style="background-color: var(--primary); border: none;">
+                <i class="bi bi-plus-lg me-1"></i> Create Task
+            </a>
+        </div>
+    </div>
+
+    <div class="card saas-card">
+        <div class="table-responsive">
+            <table class="table saas-table mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">Task Title</th>
+                        <th>Assigned By</th>
+                        <th>Project</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-semibold text-dark">@item.TaskTitle</div>
+                                <div class="small text-muted" style="font-size: 0.75rem;">Created: @item.CreatedAt.ToString("MMM dd")</div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-2"
+                                         style="width: 28px; height: 28px; font-size: 0.75rem; color: var(--primary); font-weight: bold;">
+                                        @item.Main_Users.FirstName.Substring(0, 1)
+                                    </div>
+                                    <span>@item.Main_Users.FirstName</span>
+                                </div>
+                            </td>
+                            <td><span class="text-dark fw-medium">@item.Project.ProjectName</span></td>
+                            <td>
+                                @{
+                                    string pBadge = "badge-soft-secondary";
+                                    string pText = item.Priority ?? "Normal";
+                                    string pLower = pText.ToLower();
+                                    if (pLower.Contains("high")) { pBadge = "badge-soft-high"; }
+                                    else if (pLower.Contains("medium")) { pBadge = "badge-soft-med"; }
+                                    else if (pLower.Contains("low")) { pBadge = "badge-soft-low"; }
+                                }
+                                <span class="badge badge-soft @pBadge">@pText</span>
+                            </td>
+                            <td>
+                                @{
+                                    string sBadge = "badge-soft-secondary";
+                                    string sText = item.Status ?? "Pending";
+                                    string sLower = sText.ToLower();
+                                    if (sLower.Contains("progress")) { sBadge = "badge-soft-primary"; }
+                                    else if (sLower.Contains("completed")) { sBadge = "badge-soft-low"; }
+                                    else if (sLower.Contains("pending")) { sBadge = "badge-soft-med"; }
+                                }
+                                <span class="badge badge-soft @sBadge">@sText</span>
+                            </td>
+                            <td>
+                                @if (item.DueDate != DateTime.MinValue)
+                                {
+                                    bool isOverdue = item.DueDate < DateTime.Now && sText.ToLower() != "completed";
+                                    <span class="@(isOverdue ? "text-danger fw-bold" : "")">@item.DueDate.ToString("MMM dd, yyyy")</span>
+                                }
+                                else
+                                { <span class="text-muted">-</span>}
+                            </td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-1">
+                                    <button type="button" class="btn btn-action" title="Task Chat" onclick="openComments(@item.TaskId)">
+                                        <i class="bi bi-chat-text"></i>
+                                    </button>
+                                    <a href="@Url.Action("EditTask", "Tasks", new { id = item.TaskId })" class="btn btn-action" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a href="@Url.Action("TaskReport", "Tasks", new { id = item.TaskId })" class="btn btn-action" target="_blank" title="Details">
+                                        <i class="bi bi-info-circle"></i>
+                                    </a>
+                                    @using (Html.BeginForm("Delete", "Tasks", new { id = item.TaskId }, FormMethod.Post, new { style = "display:inline;", onsubmit = "return confirm('Are you sure?');" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-action btn-action-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-clipboard-check text-muted fs-3"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark">No tasks found</h6>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@* Activity Drawer Sidebar *@
+<div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="offcanvasComments" style="width: 420px; border-radius: 24px 0 0 24px;">
+    <div class="offcanvas-header bg-white border-bottom py-4 px-4">
+        <h5 class="offcanvas-title fw-bold text-dark"><i class="bi bi-chat-dots me-2 text-primary"></i>Task Activity</h5>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column bg-light p-0">
+        <div id="commentsContainer" class="h-100">
+            @* AJAX content loads here *@
+        </div>
+    </div>
+</div>
+
+@* --- SCRIPTS --- *@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let activeTaskId = 0;
+
+    function openComments(taskId) {
+        activeTaskId = taskId;
+        const container = $('#commentsContainer');
+
+        // Show Loading
+        container.html('<div class="text-center py-5"><div class="spinner-border text-primary opacity-25"></div></div>');
+
+        // Show the offcanvas sidebar
+        var offcanvasElement = document.getElementById('offcanvasComments');
+        var bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasElement);
+        bsOffcanvas.show();
+
+        // Load content via AJAX from TasksController
+        $.get('@Url.Action("GetTaskComments", "Tasks")', { id: taskId }, function (data) {
+            container.html(data);
+
+            // Re-bind the Send button inside the loaded HTML
+            bindManagerForm();
+
+            // Scroll to bottom
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) chatMessages.scrollTop = chatMessages.scrollHeight;
+        }).fail(function() {
+            container.html('<div class="alert alert-danger m-3">Could not load discussion.</div>');
+        });
+    }
+
+    function bindManagerForm() {
+        // Intercept the form submission inside the partial view
+        $('#commentForm').off('submit').on('submit', function (e) {
+            e.preventDefault();
+            const form = $(this);
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        openComments(activeTaskId); // Reload the thread on success
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function() {
+                    alert("System error: Failed to post message.");
+                }
+            });
+        });
+    }
+</script>

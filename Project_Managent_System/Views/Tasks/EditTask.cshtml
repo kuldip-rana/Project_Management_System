@@ -1,0 +1,208 @@
+﻿@model Project_Managent_System.Models.Task
+
+@{
+    ViewBag.Title = "Edit Task";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* --- THEME VARIABLES --- */
+    :root {
+        --primary: #6366F1;
+        --text-dark: #111827;
+        --text-muted: #6B7280;
+        --bg-light: #F9FAFB;
+        --border-color: #E5E7EB;
+        --readonly-bg: #F3F4F6;
+    }
+
+    /* --- CARD STYLING --- */
+    .edit-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+        background: #fff;
+    }
+
+    .card-header-custom {
+        background-color: #fff;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.5rem 2rem;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+    }
+
+    /* --- FORM ELEMENTS --- */
+    .form-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border-color: var(--border-color);
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: var(--text-dark);
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Readonly Field Styling */
+        .form-control[readonly] {
+            background-color: var(--readonly-bg);
+            color: #4B5563;
+            border: 1px solid transparent;
+            font-weight: 500;
+        }
+
+    /* Input Group Icons */
+    .input-group-text {
+        background-color: #fff;
+        border-color: var(--border-color);
+        color: var(--text-muted);
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    /* Description Box */
+    .description-box {
+        background-color: var(--bg-light);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1rem;
+        font-size: 0.95rem;
+        color: #374151;
+        min-height: 100px;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-9">
+
+            <div class="card edit-card">
+
+                <div class="card-header-custom d-flex align-items-center justify-content-between">
+                    <div>
+                        <h4 class="fw-bold mb-1" style="color: var(--text-dark);">Edit Task Details</h4>
+                        <div class="text-muted small">Update status, priority, and deadlines</div>
+                    </div>
+                    <div class="bg-light px-3 py-2 rounded-3 border text-muted small fw-bold">
+                        ID: #@Model.TaskId
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    @using (Html.BeginForm("EditTask", "Tasks", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.TaskId)
+                        @Html.HiddenFor(m => m.CreatedByManagerId)
+                        @Html.HiddenFor(m => m.CreatedAt)
+                        @Html.HiddenFor(m => m.ProjectId)
+
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger mb-4 shadow-sm border-0" })
+
+                        <div class="mb-5">
+                            <h6 class="text-muted text-uppercase fw-bold mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">
+                                <i class="bi bi-lock-fill me-1"></i> Locked Information
+                            </h6>
+
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Project</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-0"><i class="bi bi-folder-fill"></i></span>
+                                        <input type="text" class="form-control" value="@ViewBag.ProjectName" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    @Html.LabelFor(m => m.StartDate, new { @class = "form-label" })
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-0"><i class="bi bi-calendar-event"></i></span>
+                                        @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    @Html.LabelFor(m => m.TaskTitle, "Task Title", new { @class = "form-label" })
+                                    @Html.TextBoxFor(m => m.TaskTitle, new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+
+                                <div class="col-12">
+                                    @Html.LabelFor(m => m.TaskDescription, "Description", new { @class = "form-label" })
+                                    <div class="description-box">
+                                        @Html.Raw(Model.TaskDescription)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="border-secondary opacity-10 my-4">
+
+                        <div>
+                            <h6 class="text-primary text-uppercase fw-bold mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">
+                                <i class="bi bi-pencil-fill me-1"></i> Update Progress
+                            </h6>
+
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    @Html.LabelFor(m => m.Priority, new { @class = "form-label" })
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-flag"></i></span>
+                                        @Html.DropDownListFor(
+                                            m => m.Priority,
+                                            new SelectList(new[] { "Low", "Medium", "High" }, Model.Priority),
+                                            "-- Select --",
+                                            new { @class = "form-select" }
+                                        )
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    @Html.LabelFor(m => m.Status, new { @class = "form-label" })
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-activity"></i></span>
+                                        @Html.DropDownListFor(
+                                            m => m.Status,
+                                            new SelectList(new[] { "Pending", "In Progress", "Completed" }, Model.Status),
+                                            "-- Select --",
+                                            new { @class = "form-select" }
+                                        )
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    @Html.LabelFor(m => m.DueDate, new { @class = "form-label" })
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+                                        @Html.TextBoxFor(m => m.DueDate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-5 pt-3">
+                            <a href="@Url.Action("DisplayTaskList", "Tasks")" class="btn btn-light text-muted fw-bold px-4">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm" style="background-color: var(--primary); border: none;">
+                                Save Changes
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

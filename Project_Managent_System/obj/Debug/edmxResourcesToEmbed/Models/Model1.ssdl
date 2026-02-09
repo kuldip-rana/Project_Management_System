@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="PMS_DatabaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Comments">
+    <Key>
+      <PropertyRef Name="CommentId" />
+    </Key>
+    <Property Name="CommentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ProjectId" Type="int" Nullable="false" />
+    <Property Name="TaskId" Type="int" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="Messaage" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Main_Users">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FirstName" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="LastName" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Gender" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Role" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Password" Type="varchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Projects">
+    <Key>
+      <PropertyRef Name="ProjectId" />
+    </Key>
+    <Property Name="ProjectId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ProjectName" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Description" Type="varchar(max)" Nullable="false" />
+    <Property Name="StartDate" Type="date" Nullable="false" />
+    <Property Name="EndDate" Type="date" Nullable="false" />
+    <Property Name="Status" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Project_Document" Type="varchar(max)" Nullable="false" />
+    <Property Name="Project_Members" Type="varchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ProjectUser">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ProjectId" Type="int" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Task_Assignments">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TaskId" Type="int" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="AssignedAt" Type="datetime" Nullable="false" />
+    <Property Name="TaskStatus" Type="varchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Tasks">
+    <Key>
+      <PropertyRef Name="TaskId" />
+    </Key>
+    <Property Name="TaskId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ProjectId" Type="int" Nullable="false" />
+    <Property Name="CreatedByManagerId" Type="int" Nullable="false" />
+    <Property Name="TaskTitle" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="TaskDescription" Type="varchar(max)" Nullable="false" />
+    <Property Name="Priority" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Status" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="StartDate" Type="date" Nullable="false" />
+    <Property Name="DueDate" Type="date" Nullable="false" />
+    <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+    <Property Name="UpdatedAt" Type="datetime" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_Comments_Project">
+    <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+    <End Role="Comments" Type="Self.Comments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Projects">
+        <PropertyRef Name="ProjectId" />
+      </Principal>
+      <Dependent Role="Comments">
+        <PropertyRef Name="ProjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Comments_Task">
+    <End Role="Tasks" Type="Self.Tasks" Multiplicity="1" />
+    <End Role="Comments" Type="Self.Comments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tasks">
+        <PropertyRef Name="TaskId" />
+      </Principal>
+      <Dependent Role="Comments">
+        <PropertyRef Name="TaskId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Comments_Users">
+    <End Role="Main_Users" Type="Self.Main_Users" Multiplicity="1" />
+    <End Role="Comments" Type="Self.Comments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Main_Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Comments">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ProjectUser_Main_Users">
+    <End Role="Main_Users" Type="Self.Main_Users" Multiplicity="1" />
+    <End Role="ProjectUser" Type="Self.ProjectUser" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Main_Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProjectUser">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ProjectUser_Projects">
+    <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+    <End Role="ProjectUser" Type="Self.ProjectUser" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Projects">
+        <PropertyRef Name="ProjectId" />
+      </Principal>
+      <Dependent Role="ProjectUser">
+        <PropertyRef Name="ProjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Task_Projects_">
+    <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+    <End Role="Tasks" Type="Self.Tasks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Projects">
+        <PropertyRef Name="ProjectId" />
+      </Principal>
+      <Dependent Role="Tasks">
+        <PropertyRef Name="ProjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TaskAssignments_Task_">
+    <End Role="Tasks" Type="Self.Tasks" Multiplicity="1" />
+    <End Role="Task_Assignments" Type="Self.Task_Assignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tasks">
+        <PropertyRef Name="TaskId" />
+      </Principal>
+      <Dependent Role="Task_Assignments">
+        <PropertyRef Name="TaskId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TaskAssignments_User">
+    <End Role="Main_Users" Type="Self.Main_Users" Multiplicity="1" />
+    <End Role="Task_Assignments" Type="Self.Task_Assignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Main_Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Task_Assignments">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Tasks_manager_">
+    <End Role="Main_Users" Type="Self.Main_Users" Multiplicity="1" />
+    <End Role="Tasks" Type="Self.Tasks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Main_Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Tasks">
+        <PropertyRef Name="CreatedByManagerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="PMS_DatabaseModelStoreContainer">
+    <EntitySet Name="Comments" EntityType="Self.Comments" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Main_Users" EntityType="Self.Main_Users" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Projects" EntityType="Self.Projects" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ProjectUser" EntityType="Self.ProjectUser" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Task_Assignments" EntityType="Self.Task_Assignments" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Tasks" EntityType="Self.Tasks" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Comments_Project" Association="Self.FK_Comments_Project">
+      <End Role="Projects" EntitySet="Projects" />
+      <End Role="Comments" EntitySet="Comments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Comments_Task" Association="Self.FK_Comments_Task">
+      <End Role="Tasks" EntitySet="Tasks" />
+      <End Role="Comments" EntitySet="Comments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Comments_Users" Association="Self.FK_Comments_Users">
+      <End Role="Main_Users" EntitySet="Main_Users" />
+      <End Role="Comments" EntitySet="Comments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ProjectUser_Main_Users" Association="Self.FK_ProjectUser_Main_Users">
+      <End Role="Main_Users" EntitySet="Main_Users" />
+      <End Role="ProjectUser" EntitySet="ProjectUser" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ProjectUser_Projects" Association="Self.FK_ProjectUser_Projects">
+      <End Role="Projects" EntitySet="Projects" />
+      <End Role="ProjectUser" EntitySet="ProjectUser" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Task_Projects_" Association="Self.FK_Task_Projects_">
+      <End Role="Projects" EntitySet="Projects" />
+      <End Role="Tasks" EntitySet="Tasks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TaskAssignments_Task_" Association="Self.FK_TaskAssignments_Task_">
+      <End Role="Tasks" EntitySet="Tasks" />
+      <End Role="Task_Assignments" EntitySet="Task_Assignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TaskAssignments_User" Association="Self.FK_TaskAssignments_User">
+      <End Role="Main_Users" EntitySet="Main_Users" />
+      <End Role="Task_Assignments" EntitySet="Task_Assignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Tasks_manager_" Association="Self.FK_Tasks_manager_">
+      <End Role="Main_Users" EntitySet="Main_Users" />
+      <End Role="Tasks" EntitySet="Tasks" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

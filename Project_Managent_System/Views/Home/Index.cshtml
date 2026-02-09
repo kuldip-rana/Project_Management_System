@@ -1,0 +1,261 @@
+﻿@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* --- THEME VARIABLES --- */
+    :root {
+        --primary: #6366F1; /* Indigo */
+        --primary-dark: #4F46E5;
+        --accent: #F43F5E; /* Coral */
+        --hero-bg: #1E1B4B; /* Deep Navy */
+        --text-muted: #6B7280;
+    }
+
+    /* --- ANIMATION CLASSES (Scroll Reveal) --- */
+    .reveal {
+        position: relative;
+        transform: translateY(50px);
+        opacity: 0;
+        transition: all 1s ease;
+    }
+
+        .reveal.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+    /* --- HERO SECTION --- */
+    .hero-section {
+        background-color: var(--hero-bg);
+        /* Subtle gradient overlay for depth */
+        background-image: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.15) 0%, transparent 20%);
+        color: white;
+        padding: 120px 0 100px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        letter-spacing: -1px;
+        background: -webkit-linear-gradient(45deg, #fff, #a5b4fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-lead {
+        font-size: 1.25rem;
+        color: #cbd5e1; /* Light gray */
+        max-width: 700px;
+        margin: 0 auto 2.5rem auto;
+        line-height: 1.6;
+    }
+
+    /* --- FEATURE CARDS --- */
+    .feature-card {
+        border: none;
+        border-radius: 16px;
+        padding: 2.5rem 1.5rem;
+        background: #fff;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+    .icon-wrapper {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        margin: 0 auto 1.5rem auto;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover .icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Color variations for icons */
+    .icon-indigo {
+        background-color: #EEF2FF;
+        color: var(--primary);
+    }
+
+    .icon-coral {
+        background-color: #FFF1F2;
+        color: var(--accent);
+    }
+
+    .icon-teal {
+        background-color: #F0FDFA;
+        color: #14B8A6;
+    }
+
+    /* --- CTA SECTION --- */
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        padding: 80px 0;
+        position: relative;
+    }
+
+        /* Decorative circle in CTA */
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+    /* --- BUTTONS --- */
+    .btn-glow {
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+        transition: all 0.3s;
+    }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.7);
+            transform: translateY(-2px);
+        }
+</style>
+
+<section class="hero-section text-center">
+    <div class="container reveal active">
+        <div class="d-inline-block px-3 py-1 mb-4 rounded-pill border border-secondary border-opacity-25" style="background: rgba(255,255,255,0.05);">
+            <small class="fw-bold text-info text-uppercase" style="letter-spacing: 1px;">New Release v2.0</small>
+        </div>
+
+        <h1 class="hero-title">Plan. Execute. Succeed.</h1>
+        <p class="hero-lead">The modern workspace for agile teams. Secure cloud storage and project management combined in one seamless platform.</p>
+
+        <div class="d-flex justify-content-center gap-3">
+            <a href="@Url.Action("SignUp", "Signup_Login")" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold btn-glow" style="background-color: var(--primary); border:none;">
+                Get Started Free
+            </a>
+            <a href="@Url.Action("Login", "Signup_Login")" class="btn btn-outline-light btn-lg rounded-pill px-5 py-3 fw-bold">
+                Sign In
+            </a>
+        </div>
+
+        <div class="mt-5 pt-4 opacity-75">
+            <i class="bi bi-chevron-down fs-2 animate-bounce"></i>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5 reveal">
+            <h6 class="text-primary fw-bold text-uppercase ls-wide">Key Features</h6>
+            <h2 class="fw-bold text-dark display-6">Everything you need to succeed</h2>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4 reveal">
+                <div class="feature-card text-center">
+                    <div class="icon-wrapper icon-indigo">
+                        <i class="bi bi-cloud-arrow-up-fill"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Cloud Storage</h4>
+                    <p class="text-muted">Save your files securely online and access them seamlessly across all your devices, anywhere in the world.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 reveal" style="transition-delay: 0.1s;">
+                <div class="feature-card text-center">
+                    <div class="icon-wrapper icon-coral">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Bank-Grade Security</h4>
+                    <p class="text-muted">Your files are encrypted with AES-256 bit protection. We prioritize your privacy so you stay in control.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 reveal" style="transition-delay: 0.2s;">
+                <div class="feature-card text-center">
+                    <div class="icon-wrapper icon-teal">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Team Collaboration</h4>
+                    <p class="text-muted">Invite teammates, assign tasks, and share folders with a single click. Real-time updates keep everyone aligned.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white border-top border-bottom">
+    <div class="container text-center reveal">
+        <div class="row">
+            <div class="col-md-4">
+                <h3 class="fw-bold display-5 text-dark">10k+</h3>
+                <p class="text-muted">Active Users</p>
+            </div>
+            <div class="col-md-4">
+                <h3 class="fw-bold display-5 text-dark">99.9%</h3>
+                <p class="text-muted">Uptime Guaranteed</p>
+            </div>
+            <div class="col-md-4">
+                <h3 class="fw-bold display-5 text-dark">24/7</h3>
+                <p class="text-muted">Support Available</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section text-center overflow-hidden">
+    <div class="container position-relative z-1 reveal">
+        <h2 class="fw-bold mb-3 display-5">Ready to boost productivity?</h2>
+        <p class="mb-4 fs-5 opacity-75">Join thousands of teams who trust TaskZIP every day.</p>
+        <a href="@Url.Action("SignUp", "Signup_Login")" class="btn btn-light text-primary fw-bold btn-lg rounded-pill px-5 shadow-lg">
+            Create Your Free Account
+        </a>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // --- SCROLL ANIMATION LOGIC ---
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150; // Distance from bottom before trigger
+
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+                // Optional: remove 'else' if you only want it to animate once
+                // else {
+                //    reveals[i].classList.remove("active");
+                // }
+            }
+        }
+
+        // Attach listener
+        window.addEventListener("scroll", reveal);
+
+        // Trigger once on load to catch elements already in view
+        reveal();
+    </script>
+}

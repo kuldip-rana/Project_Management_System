@@ -1,0 +1,156 @@
+﻿@model IEnumerable<Project_Managent_System.Models.Main_Users>
+
+@{
+    ViewBag.Title = "Manage Users";
+}
+
+<div class="container-fluid py-4 px-4">
+    <div class="mb-4">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success border-0 rounded-3 small py-2 shadow-sm">
+                <i class="bi bi-check-circle me-2"></i> @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger border-0 rounded-3 small py-2 shadow-sm">
+                @Html.ValidationSummary(false, "", new { @class = "mb-0 list-unstyled" })
+            </div>
+        }
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-slate-900 m-0">User Directory</h2>
+            <p class="text-muted small">Manage system access levels and employee profiles</p>
+        </div>
+        <div>
+            <a href="@Url.Action("AddUsers", "Admin")" class="btn btn-indigo px-4 py-2 rounded-3 shadow-sm">
+                <i class="bi bi-person-plus-fill me-2"></i> Add New Employee
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-uppercase fs-xs fw-bold text-muted">Employee</th>
+                        <th class="py-3 text-uppercase fs-xs fw-bold text-muted">Gender</th>
+                        <th class="py-3 text-uppercase fs-xs fw-bold text-muted">Access Role</th>
+                        <th class="py-3 text-uppercase fs-xs fw-bold text-muted">Contact</th>
+                        <th class="pe-4 py-3 text-center text-uppercase fs-xs fw-bold text-muted">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-indigo-soft text-indigo rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold">
+                                        @item.FirstName[0]@item.LastName[0]
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-slate-900">@item.FirstName @item.LastName</div>
+                                        <div class="text-muted fs-xs">ID: #U-@item.Id</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="text-slate-700">@item.Gender</span></td>
+                            <td>
+                                <span class="badge @(item.Role == "Admin" ? "bg-danger-subtle text-danger" : (item.Role == "Manager" ? "bg-warning-subtle text-warning" : "bg-primary-subtle text-primary")) rounded-pill px-3">
+                                    @item.Role
+                                </span>
+                            </td>
+                            <td>
+                                <div class="text-slate-700 fw-medium">@item.Email</div>
+                                <div class="text-muted fs-xs italic">Encrypted Security Logged</div>
+                            </td>
+                            <td class="pe-4 text-center">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a href="@Url.Action("Edit", "Admin", new { id = item.Id })" class="btn btn-sm btn-light-indigo rounded-circle" title="Edit Profile">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a href="@Url.Action("Details", "Admin", new { id = item.Id })" class="btn btn-sm btn-light-secondary rounded-circle" title="View Details">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    <a href="@Url.Action("DeleteUser", "Admin", new { id = item.Id })" class="btn btn-sm btn-light-danger rounded-circle" title="Remove User" onclick="return confirm('Delete this user permanently?')">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --indigo: #4F46E5;
+        --indigo-soft: #eef2ff;
+        --slate-900: #0f172a;
+    }
+
+    .fs-xs {
+        font-size: 0.75rem;
+    }
+
+    .avatar-sm {
+        width: 40px;
+        height: 40px;
+        font-size: 0.85rem;
+    }
+
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+
+    .btn-indigo {
+        background: var(--indigo);
+        color: white;
+        border: none;
+    }
+
+        .btn-indigo:hover {
+            background: #4338ca;
+            color: white;
+        }
+
+    .bg-primary-subtle {
+        background-color: #e0e7ff;
+        color: #4338ca;
+    }
+
+    .bg-danger-subtle {
+        background-color: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .bg-warning-subtle {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .btn-light-indigo {
+        background: var(--indigo-soft);
+        color: var(--indigo);
+        border: none;
+    }
+
+    .btn-light-danger {
+        background: #fee2e2;
+        color: #ef4444;
+        border: none;
+    }
+
+    .btn-light-secondary {
+        background: #f1f5f9;
+        color: #64748b;
+        border: none;
+    }
+</style>

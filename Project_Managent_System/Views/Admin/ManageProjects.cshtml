@@ -1,0 +1,187 @@
+﻿@model IEnumerable<Project_Managent_System.Models.Project>
+
+@{
+    ViewBag.Title = "Project Management";
+}
+
+<div class="container-fluid py-4 px-4 bg-light min-vh-100">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-slate-900 m-0">Project Repository</h2>
+            <p class="text-muted small">TaskZip Management Interface</p>
+        </div>
+        <a href="@Url.Action("AddProject", "Admin")" class="btn btn-indigo px-4 py-2 rounded-3 shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i> New Project
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-uppercase fs-xs fw-bold text-muted">Project</th>
+                        <th class="py-3 text-uppercase fs-xs fw-bold text-muted">Created By</th>
+                        <th class="py-3 text-uppercase fs-xs fw-bold text-muted">Timeline</th>
+                        <th class="py-3 text-uppercase fs-xs fw-bold text-muted text-center">Resources</th>
+                        <th class="pe-4 py-3 text-center text-uppercase fs-xs fw-bold text-muted">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-slate-900">@item.ProjectName</div>
+                                <div class="text-muted fs-xs">PID: #PRJ-@item.ProjectId</div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-xs bg-indigo-soft text-indigo rounded-circle me-2 d-flex align-items-center justify-content-center fw-bold">
+                                        @(string.IsNullOrEmpty(item.Project_Members) ? "S" : item.Project_Members.Substring(0, 1).ToUpper())
+                                    </div>
+                                    <div class="small fw-medium text-slate-700">
+                                        @(item.Project_Members ?? "Admin")
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="small fw-medium">@item.StartDate.ToString("MMM dd") - @item.EndDate.ToString("MMM dd, yyyy")</div>
+                                @{
+                                    var isOverdue = item.EndDate < DateTime.Now && item.Status != "Completed";
+                                    <span class="badge @(isOverdue ? "bg-danger-subtle text-danger" : "bg-success-subtle text-success") rounded-pill x-small">
+                                        @(isOverdue ? "Overdue" : item.Status ?? "Active")
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-white border text-indigo fw-medium rounded-pill px-3">
+                                    <i class="bi bi-card-checklist me-1"></i> @item.Tasks.Count
+                                </span>
+                            </td>
+                            <td class="pe-4 text-center">
+                                <div class="d-flex justify-content-center gap-2">
+                                    @* 💬 Discussion Button - Moved here *@
+                                    <button class="btn btn-sm btn-light-indigo rounded-circle position-relative"
+                                            onclick="openComments(@item.ProjectId, 'Project')"
+                                            title="Discussion">
+                                        <i class="bi bi-chat-dots"></i>
+                                        @if (item.Comments != null && item.Comments.Count > 0)
+                                        {
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light" style="font-size: 0.55rem; padding: 0.25em 0.4em;">
+                                                @item.Comments.Count
+                                            </span>
+                                        }
+                                    </button>
+
+                                    @* ✏️ Edit Button *@
+                                    <a href="@Url.Action("EditProject", "Admin", new { id = item.ProjectId })"
+                                       class="btn btn-sm btn-light-indigo rounded-circle" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    @* 🗑️ Delete Button *@
+                                    <a href="@Url.Action("DeleteProject", "Admin", new { id = item.ProjectId })"
+                                       class="btn btn-sm btn-light-danger rounded-circle"
+                                       onclick="return confirm('Delete Project?')" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --indigo: #4F46E5;
+        --indigo-soft: #eef2ff;
+        --slate-900: #0f172a;
+    }
+
+    .fs-xs {
+        font-size: 0.75rem;
+    }
+
+    .x-small {
+        font-size: 0.65rem;
+        padding: 2px 8px;
+    }
+
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+
+    .avatar-xs {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+
+    .btn-indigo {
+        background: var(--indigo);
+        color: white;
+        border: none;
+    }
+
+        .btn-indigo:hover {
+            background: #3730a3;
+            color: white;
+        }
+
+    .bg-indigo-soft {
+        background-color: var(--indigo-soft);
+    }
+
+    .text-indigo {
+        color: var(--indigo);
+    }
+
+    /* Modern SaaS Subtle Badges */
+    .bg-success-subtle {
+        background-color: #f0fdf4;
+        color: #15803d;
+    }
+
+    .bg-danger-subtle {
+        background-color: #fef2f2;
+        color: #b91c1c;
+    }
+
+    /* Action Button Styles */
+    .btn-light-indigo {
+        background: var(--indigo-soft);
+        color: var(--indigo);
+        border: none;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .btn-light-indigo:hover {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+    .btn-light-danger {
+        background: #fef2f2;
+        color: #ef4444;
+        border: none;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .btn-light-danger:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+</style>

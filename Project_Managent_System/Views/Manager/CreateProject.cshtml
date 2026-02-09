@@ -1,0 +1,158 @@
+﻿@model Project_Managent_System.Models.Project
+
+@{
+    ViewBag.Title = "Create Project";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4 py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+
+            <div class="mb-3">
+                <a href="@Url.Action("ManagerDashboard", "Manager")" class="text-decoration-none text-muted small fw-bold">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light p-3 rounded-circle me-3 text-primary">
+                            <i class="bi bi-folder-plus fs-4"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-1">Create New Project</h4>
+                            <p class="text-muted small mb-0">Fill in the details to kickstart a new initiative.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    @using (Html.BeginForm("CreateProject", "Manager", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark">Project Name</label>
+                            @Html.TextBoxFor(m => m.ProjectName, new { @class = "form-control form-control-lg bg-light border-0", placeholder = "e.g. Q4 Marketing Campaign" })
+                            @Html.ValidationMessageFor(m => m.ProjectName, "", new { @class = "text-danger small mt-1" })
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Project Leader</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-person-badge"></i></span>
+                                    <input type="text" class="form-control bg-white border-start-0 text-dark fw-bold" value="@Session["Name"]" readonly />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Initial Status</label>
+                                @Html.DropDownListFor(
+                                    m => m.Status,
+                                    new SelectList(new[] { "Pending", "InProcess", "Completed" }),
+                                    "-- Select Status --",
+                                    new { @class = "form-select" })
+                                @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger small mt-1" })
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark">Description</label>
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 8, id = "editor" })
+                            @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger small mt-1" })
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Start Date</label>
+                                @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", id = "StartDate" })
+                                @Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger small mt-1" })
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Target End Date</label>
+                                @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                                @Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "text-danger small mt-1" })
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark">Project Documents</label>
+                            <div class="border dashed-border p-4 rounded-3 text-center bg-light">
+                                <i class="bi bi-cloud-arrow-up text-primary fs-2 mb-2 d-block"></i>
+                                <div class="d-flex justify-content-center">
+                                    <input type="file" name="ProjectDocument" class="form-control form-control-sm" style="max-width: 400px;" />
+                                </div>
+                                <small class="text-muted d-block mt-2">Upload project specs, requirements, or briefs.</small>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 text-muted opacity-25" />
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="@Url.Action("ManagerDashboard")" class="btn btn-light text-muted fw-semibold px-4">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm" style="background-color: var(--primary); border: none;">
+                                Create Project
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
+    <script>
+        // Initialize Editor
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
+                placeholder: 'Describe the project goals and requirements...'
+            })
+            .catch(error => console.error(error));
+
+        // Disable Past Dates
+        $(document).ready(function () {
+            let today = new Date().toISOString().split('T')[0];
+            const startDateInput = document.getElementById("StartDate");
+            if (startDateInput) {
+                startDateInput.setAttribute("min", today);
+            }
+        });
+    </script>
+
+    <style>
+        .ck-editor__editable_inline {
+            min-height: 200px; /* Increased height for better writing experience */
+            border-bottom-left-radius: 0.5rem !important;
+            border-bottom-right-radius: 0.5rem !important;
+        }
+
+        .ck-toolbar {
+            border-top-left-radius: 0.5rem !important;
+            border-top-right-radius: 0.5rem !important;
+        }
+
+        /* Dashed Border for file upload */
+        .dashed-border {
+            border: 2px dashed #cbd5e1 !important;
+            transition: all 0.2s;
+        }
+
+            .dashed-border:hover {
+                border-color: var(--primary) !important;
+                background-color: #EEF2FF !important;
+            }
+
+        /* Focus states matching theme */
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+        }
+    </style>
+}

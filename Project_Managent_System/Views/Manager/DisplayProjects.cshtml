@@ -1,0 +1,291 @@
+﻿@model IEnumerable<Project_Managent_System.Models.Project>
+
+@{
+    ViewBag.Title = "Projects";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Scope styles to this view */
+    :root {
+        --primary: #6366F1; /* Indigo */
+        --success: #10B981; /* Mint */
+        --warning: #F59E0B; /* Amber */
+        --danger: #F43F5E; /* Coral */
+        --bg-light: #F9FAFB;
+    }
+
+    /* Table Styling */
+    .table-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background-color: #F8FAFC;
+        color: #64748B;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid #E2E8F0;
+        padding: 1rem 1.5rem;
+    }
+
+    .table tbody td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #F1F5F9;
+        color: #334155;
+        font-size: 0.9rem;
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table tbody tr:hover {
+        background-color: #F8FAFC;
+    }
+
+    /* Status Badges */
+    .badge-soft {
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 600;
+        border-radius: 6px;
+    }
+
+    .badge-soft-success {
+        background-color: #ECFDF5;
+        color: var(--success);
+    }
+
+    .badge-soft-warning {
+        background-color: #FFFBEB;
+        color: var(--warning);
+    }
+
+    .badge-soft-primary {
+        background-color: #EEF2FF;
+        color: var(--primary);
+    }
+
+    .badge-soft-secondary {
+        background-color: #F1F5F9;
+        color: #64748B;
+    }
+
+    /* Action Buttons */
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        color: #64748B;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        background: none;
+    }
+
+        .btn-icon:hover {
+            background-color: #F1F5F9;
+            color: var(--primary);
+        }
+
+    /* Added specific hover for the chat button */
+    .btn-icon-chat:hover {
+        background-color: #EEF2FF;
+        color: var(--primary);
+    }
+
+    .btn-icon-danger:hover {
+        background-color: #FFF1F2;
+        color: var(--danger);
+    }
+
+    /* Project Icon */
+    .project-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #EEF2FF;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        margin-right: 12px;
+        font-size: 1.2rem;
+    }
+</style>
+
+<div class="container-fluid px-4 py-4">
+
+    @if (TempData["DeletedMessage"] != null)
+    {
+        <div class="alert alert-success border-0 shadow-sm mb-4">@Html.Raw(TempData["DeletedMessage"])</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger border-0 shadow-sm mb-4">@Html.Raw(TempData["ErrorMessage"])</div>
+    }
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">Projects</h3>
+            <p class="text-muted small mb-0">Manage and track all ongoing initiatives.</p>
+        </div>
+        <a href="@Url.Action("CreateProject", "Manager")" class="btn btn-primary shadow-sm rounded-pill px-4 fw-bold" style="background-color: var(--primary); border: none;">
+            <i class="bi bi-plus-lg me-1"></i> New Project
+        </a>
+    </div>
+
+    <div class="card table-card bg-white">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Project Name</th>
+                        <th style="width: 15%;">Timeline</th>
+                        <th style="width: 15%;">Status</th>
+                        <th style="width: 20%;">Created By</th>
+                        <th style="width: 20%; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var project in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="project-icon">
+                                        <i class="bi bi-folder2"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">@project.ProjectName</div>
+                                        <div class="text-muted small" style="font-size: 0.75rem;">ID: #@project.ProjectId</div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span class="fw-medium text-dark" style="font-size: 0.85rem;">@project.StartDate.ToString("MMM dd") - @project.EndDate.ToString("MMM dd")</span>
+                                    <span class="text-muted small" style="font-size: 0.75rem;">@project.EndDate.Year</span>
+                                </div>
+                            </td>
+
+                            <td>
+                                @{
+                                    string badgeClass = "badge-soft-secondary";
+                                    string iconClass = "bi-circle";
+
+                                    if (project.Status == "Pending")
+                                    {
+                                        badgeClass = "badge-soft-warning";
+                                        iconClass = "bi-clock";
+                                    }
+                                    else if (project.Status == "InProcess")
+                                    {
+                                        badgeClass = "badge-soft-primary";
+                                        iconClass = "bi-activity";
+                                    }
+                                    else if (project.Status == "Completed")
+                                    {
+                                        badgeClass = "badge-soft-success";
+                                        iconClass = "bi-check-circle";
+                                    }
+                                }
+                                <span class="badge @badgeClass">
+                                    <i class="bi @iconClass me-1"></i> @project.Status
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center text-muted small">
+                                    <i class="bi bi-people me-2"></i>
+                                    @if (string.IsNullOrEmpty(project.Project_Members) || project.Project_Members == "0")
+                                    {
+                                        <span>No members</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@project.Project_Members </span>
+                                    }
+                                </div>
+                            </td>
+
+                            <td class="text-end">
+                                <button type="button" class="btn btn-icon btn-icon-chat" title="Project Chat" onclick="openComments(@project.ProjectId)">
+                                    <i class="bi bi-chat-text"></i>
+                                </button>
+
+                                <a href="@Url.Action("EditProject", new { id = project.ProjectId })" class="btn btn-icon" title="Edit" data-bs-toggle="tooltip">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a href="@Url.Action("ProjectReport", new { id = project.ProjectId })" class="btn btn-icon" title="Download Report" data-bs-toggle="tooltip">
+                                    <i class="bi bi-file-earmark-arrow-down"></i>
+                                </a>
+                                <a href="@Url.Action("DeleteProject", new { id = project.ProjectId })" class="btn btn-icon btn-icon-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this project?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
+                                No projects found. Start by creating one!
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function loadComments(taskId) {
+        // Set the target container
+        const container = $('#commentsContainer');
+        container.html('<div class="text-center p-5"><div class="spinner-border text-primary"></div></div>');
+
+        // Fetch the partial view
+        $.get('@Url.Action("GetTaskComments", "User")', { id: taskId }, function (data) {
+            container.html(data);
+            
+            // Scroll chat to bottom
+            var chatDiv = document.getElementById("chatMessages");
+            if(chatDiv) chatDiv.scrollTop = chatDiv.scrollHeight;
+
+            // Intercept the form inside the loaded partial view
+            $('#commentForm').submit(function (e) {
+                e.preventDefault();
+                const form = $(this);
+                
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: form.serialize(),
+                    success: function (response) {
+                        // Reload comments on success
+                        loadComments(taskId);
+                    },
+                    error: function() {
+                        alert("Could not post message.");
+                    }
+                });
+            });
+        });
+    }
+</script>

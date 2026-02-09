@@ -1,0 +1,380 @@
+﻿@model Project_Managent_System.ViewModels.TaskAssignViewModel
+@{
+    ViewBag.Title = "Assign Task";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* --- THEME VARIABLES --- */
+    :root {
+        --primary: #6366F1; /* Indigo */
+        --primary-soft: #EEF2FF;
+        --text-dark: #1F2937;
+        --text-muted: #6B7280;
+        --border-color: #E5E7EB;
+        --bg-light: #F9FAFB;
+    }
+
+    /* --- CARD & LAYOUT --- */
+    .assign-card {
+        max-width: 800px;
+        margin: 0 auto;
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+        background: #fff;
+    }
+
+    /* --- FORM ELEMENTS --- */
+    .form-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    .form-select, .form-control {
+        border-color: var(--border-color);
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+        .form-select:focus, .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+    .input-group-text {
+        background-color: var(--bg-light);
+        border-color: var(--border-color);
+        color: var(--text-muted);
+    }
+
+    /* --- USER LIST COMPONENT --- */
+    .user-list-container {
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .user-search-box {
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        border-radius: 0;
+        padding: 1rem;
+        background-color: #fff;
+    }
+
+        .user-search-box:focus {
+            box-shadow: none;
+            background-color: var(--bg-light);
+        }
+
+    .user-scroll-area {
+        max-height: 250px;
+        overflow-y: auto;
+        padding: 0.5rem;
+        background-color: #fff;
+    }
+
+        /* Scrollbar styling */
+        .user-scroll-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .user-scroll-area::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .user-scroll-area::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+
+    /* Individual User Item */
+    .user-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        margin-bottom: 4px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+    }
+
+        .user-item:hover {
+            background-color: var(--bg-light);
+        }
+
+        .user-item.selected {
+            background-color: var(--primary-soft);
+            border-color: var(--primary);
+        }
+
+    /* Avatar Circle */
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #E0E7FF;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 12px;
+        margin-right: 12px;
+    }
+
+    .user-item.selected .user-avatar {
+        background-color: var(--primary);
+        color: #fff;
+    }
+
+    /* Checkmark icon */
+    .check-icon {
+        margin-left: auto;
+        color: var(--primary);
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.2s;
+    }
+
+    .user-item.selected .check-icon {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* --- CHIPS (Selected Users) --- */
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        margin: 4px;
+        background-color: var(--primary);
+        color: white;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+    }
+
+    .no-users-msg {
+        text-align: center;
+        padding: 20px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        display: none;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="card assign-card">
+        <div class="card-body p-4 p-md-5">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold mb-1" style="color: var(--text-dark);">Assign Task</h3>
+                    <p class="text-muted small mb-0">Distribute work to your team members.</p>
+                </div>
+                <div class="bg-light rounded-circle p-3 text-primary">
+                    <i class="bi bi-person-plus-fill fs-4"></i>
+                </div>
+            </div>
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i> @TempData["ErrorMessage"]
+                </div>
+            }
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success border-0 shadow-sm rounded-3 mb-4">
+                    <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Project</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-folder2-open"></i></span>
+                            @Html.DropDownListFor(m => m.ProjectId, Model.Projects,
+                                "-- Select Project --",
+                                new { @class = "form-select", id = "projectSelect", required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Task</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-list-task"></i></span>
+                            <select id="taskSelect" name="TaskId" class="form-select" required disabled>
+                                <option value="">Select Project First</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <label class="form-label d-flex justify-content-between">
+                            <span>Assign Team Members</span>
+                            <span class="text-muted small fw-normal">Click to select/deselect</span>
+                        </label>
+
+                        <div class="user-list-container">
+                            <div class="position-relative">
+                                <i class="bi bi-search position-absolute text-muted" style="left: 15px; top: 18px;"></i>
+                                <input type="text" id="userSearch" class="form-control user-search-box ps-5" placeholder="Filter users by name..." />
+                            </div>
+
+                            <div class="user-scroll-area" id="userList">
+                                @foreach (var user in Model.Users)
+                                {
+                                    var initial = !string.IsNullOrEmpty(user.Text) ? user.Text.Substring(0, 1).ToUpper() : "U";
+
+                                    <div class="user-item" data-id="@user.Value" onclick="toggleUser(this)">
+                                        <div class="user-avatar">@initial</div>
+                                        <span class="fw-medium text-dark user-name">@user.Text</span>
+                                        <i class="bi bi-check-circle-fill check-icon"></i>
+                                    </div>
+                                }
+
+                                <div id="noUsersMessage" class="no-users-msg">
+                                    <i class="bi bi-people text-muted fs-3 d-block mb-2"></i>
+                                    No users found matching your search.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded-3 border border-dashed" style="min-height: 60px;">
+                            <label class="small text-muted text-uppercase fw-bold mb-2 d-block" style="font-size: 0.7rem;">Selected Users</label>
+                            <div id="selectedUsers">
+                                <span class="text-muted small fst-italic ms-1" id="placeholder-text">No users selected yet...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <select id="SelectedUserIds" name="SelectedUserIds" multiple hidden></select>
+
+                    <div class="col-12 d-flex gap-2 justify-content-end pt-3">
+                        @Html.ActionLink("Cancel", "ManagerDashboard", "Manager", null, new { @class = "btn btn-light text-muted px-4" })
+                        <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm" style="background-color: var(--primary); border: none;">
+                            Confirm Assignment
+                        </button>
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    const selected = new Set();
+    const hiddenSelect = document.getElementById("SelectedUserIds");
+    const selectedContainer = document.getElementById("selectedUsers");
+    const placeholderText = document.getElementById("placeholder-text");
+
+    function toggleUser(el) {
+        const id = el.dataset.id;
+
+        if (selected.has(id)) {
+            selected.delete(id);
+            el.classList.remove("selected");
+        } else {
+            selected.add(id);
+            el.classList.add("selected");
+        }
+        refreshSelected();
+    }
+
+    function refreshSelected() {
+        hiddenSelect.innerHTML = "";
+        selectedContainer.innerHTML = "";
+
+        if (selected.size === 0) {
+            selectedContainer.appendChild(placeholderText);
+            placeholderText.style.display = "inline";
+        } else {
+            // Re-append chip logic
+            selected.forEach(id => {
+                // Add to hidden select for Form POST
+                const option = document.createElement("option");
+                option.value = id;
+                option.selected = true;
+                hiddenSelect.appendChild(option);
+
+                // Create visual chip
+                const userName = document.querySelector(`.user-item[data-id='${id}'] .user-name`).innerText;
+                const chip = document.createElement("span");
+                chip.className = "chip animate__animated animate__fadeIn"; // fade in effect
+                chip.innerHTML = `<i class="bi bi-person-fill me-1" style="opacity:0.7"></i> ${userName}`;
+                selectedContainer.appendChild(chip);
+            });
+        }
+    }
+
+    // 🔍 USER SEARCH
+    document.getElementById("userSearch").addEventListener("keyup", function () {
+        const term = this.value.toLowerCase();
+        let visibleCount = 0;
+
+        document.querySelectorAll(".user-item").forEach(u => {
+            const name = u.querySelector(".user-name").innerText.toLowerCase();
+            const match = name.includes(term);
+            u.style.display = match ? "flex" : "none"; // flex to keep alignment
+            if (match) visibleCount++;
+        });
+
+        const noUsersMsg = document.getElementById("noUsersMessage");
+        noUsersMsg.style.display = visibleCount === 0 ? "block" : "none";
+    });
+
+    // 🔄 LOAD TASKS (AJAX)
+    document.getElementById("projectSelect").addEventListener("change", function () {
+        const projectId = this.value;
+        const taskSelect = document.getElementById("taskSelect");
+
+        taskSelect.disabled = true;
+        taskSelect.innerHTML = "<option>Loading tasks...</option>";
+
+        if (!projectId) {
+            taskSelect.innerHTML = "<option value=''>Select Project First</option>";
+            return;
+        }
+
+        fetch(`/Tasks/GetTasksByProject?projectId=${projectId}`)
+            .then(res => res.json())
+            .then(data => {
+                taskSelect.innerHTML = "<option value=''>-- Select Task --</option>";
+
+                if (data.length === 0) {
+                    taskSelect.innerHTML += "<option disabled>No tasks available in this project</option>";
+                } else {
+                    data.forEach(t => {
+                        const opt = document.createElement("option");
+                        opt.value = t.TaskId;
+                        opt.text = t.TaskTitle;
+                        taskSelect.appendChild(opt);
+                    });
+                }
+                taskSelect.disabled = false;
+            })
+            .catch(err => {
+                console.error(err);
+                taskSelect.innerHTML = "<option>Error loading tasks</option>";
+            });
+    });
+</script>
