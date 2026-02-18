@@ -3,14 +3,20 @@
 @{
     ViewBag.Title = "Create Project";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Check user role once for cleaner logic
+    bool isAdmin = Session["Role"]?.ToString() == "Admin";
+    string backController = isAdmin ? "Admin" : "Manager";
+    string backAction = isAdmin ? "ManageProjects" : "DisplayProjects";
 }
+
 
 <div class="container-fluid px-4 py-5">
     <div class="row justify-content-center">
         <div class="col-lg-10 col-xl-9">
 
             <div class="mb-3">
-                <a href="@Url.Action("ManagerDashboard", "Manager")" class="text-decoration-none text-muted small fw-bold">
+                <a href="@Url.Action(backAction, backController)" class="text-decoration-none text-muted small fw-bold">
                     <i class="bi bi-arrow-left"></i> Back to Dashboard
                 </a>
             </div>
@@ -92,7 +98,7 @@
                         <hr class="my-4 text-muted opacity-25" />
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="@Url.Action("ManagerDashboard")" class="btn btn-light text-muted fw-semibold px-4">Cancel</a>
+                            <a href="@Url.Action(backAction, backController)" class="btn btn-light text-muted fw-semibold px-4">Cancel</a>
                             <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm" style="background-color: var(--primary); border: none;">
                                 Create Project
                             </button>

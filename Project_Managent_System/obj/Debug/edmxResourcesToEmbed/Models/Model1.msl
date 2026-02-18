@@ -69,7 +69,7 @@
       <EntityTypeMapping TypeName="PMS_DatabaseModel.Comment">
         <MappingFragment StoreEntitySet="Comments">
           <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
-          <ScalarProperty Name="Messaage" ColumnName="Messaage" />
+          <ScalarProperty Name="Message" ColumnName="Message" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
           <ScalarProperty Name="TaskId" ColumnName="TaskId" />
           <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />

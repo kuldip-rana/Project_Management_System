@@ -3,6 +3,11 @@
 @{
     ViewBag.Title = "Edit Project";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Check user role once for cleaner logic
+    bool isAdmin = Session["Role"]?.ToString() == "Admin";
+    string backController = isAdmin ? "Admin" : "Manager";
+    string backAction = isAdmin ? "ManageProjects" : "DisplayProjects";
 }
 
 <style>
@@ -19,11 +24,10 @@
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     }
 
-    /* Custom Input Styling */
     .form-label {
         font-weight: 600;
         font-size: 0.875rem;
-        color: #374151; /* Gray-700 */
+        color: #374151;
         margin-bottom: 0.5rem;
     }
 
@@ -39,14 +43,12 @@
             box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
-        /* Readonly inputs look distinct */
         .form-control[readonly] {
             background-color: #F3F4F6;
             color: #6B7280;
             cursor: not-allowed;
         }
 
-    /* File Upload Area */
     .file-upload-wrapper {
         border: 2px dashed var(--border-color);
         border-radius: 0.75rem;
@@ -58,12 +60,11 @@
 
         .file-upload-wrapper:hover {
             border-color: var(--primary);
-            background-color: #EEF2FF; /* Very light indigo */
+            background-color: #EEF2FF;
         }
 
-    /* Current File Badge */
     .current-file-card {
-        background-color: #F0FDFA; /* Light Teal */
+        background-color: #F0FDFA;
         border: 1px solid #CCFBF1;
         color: #0F766E;
         border-radius: 0.5rem;
@@ -81,12 +82,20 @@
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <a href="@Url.Action("DisplayProjects", "Manager")" class="text-decoration-none text-muted small fw-bold mb-1 d-block">
+                    @* Dynamic Back Link based on Role *@
+                    <a href="@Url.Action(backAction, backController)" class="text-decoration-none text-muted small fw-bold mb-1 d-block">
                         <i class="bi bi-arrow-left"></i> Back to Projects
                     </a>
                     <h3 class="fw-bold text-dark m-0">Edit Project</h3>
                 </div>
-                <div class="text-end">
+                <div class="text-end d-flex gap-2 align-items-center">
+                    @* Admin Only Download Option *@
+                    @if (isAdmin)
+                    {
+                        <a href="@Url.Action("ProjectReport", "Manager", new { id = Model.ProjectId })" class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm">
+                            <i class="bi bi-file-earmark-pdf me-1"></i> Download Report
+                        </a>
+                    }
                     <span class="badge bg-light text-secondary border">ID: #@Model.ProjectId</span>
                 </div>
             </div>
@@ -94,6 +103,7 @@
             <div class="card form-card bg-white">
                 <div class="card-body p-4 p-md-5">
 
+                    @* Form targets ManagerController but redirects back correctly based on role logic in the controller *@
                     @using (Html.BeginForm("EditProject", "Manager", FormMethod.Post, new { enctype = "multipart/form-data" }))
                     {
                         @Html.AntiForgeryToken()
@@ -184,7 +194,7 @@
                         <hr class="my-4 text-muted opacity-25" />
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="@Url.Action("DisplayProjects", "Manager")" class="btn btn-light text-muted fw-semibold px-4">Cancel</a>
+                            <a href="@Url.Action(backAction, backController)" class="btn btn-light text-muted fw-semibold px-4">Cancel</a>
                             <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm" style="background-color: var(--primary); border: none;">
                                 Save Changes
                             </button>

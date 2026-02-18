@@ -21,9 +21,12 @@ namespace Project_Managent_System.Controllers
         =========================== */
         private bool IsManagerLoggedIn()
         {
-            return Session["UserId"] != null &&
-                   Session["Role"] != null &&
-                   Session["Role"].ToString() == "Manager";
+            if (Session["UserId"] == null || Session["Role"] == null)
+                return false;
+
+            string role = Session["Role"].ToString();
+
+            return role == "Manager" || role == "Admin";
         }
 
         /* ==========================
@@ -57,46 +60,41 @@ namespace Project_Managent_System.Controllers
         {
             int managerId = Convert.ToInt32(Session["UserId"]);
 
-            var tasks = db.Tasks
-                .Where(t => t.CreatedByManagerId == managerId);
+            var tasksQuery = db.Tasks.Where(t => t.CreatedByManagerId == managerId);
 
             if (projectId.HasValue)
-                tasks = tasks.Where(t => t.ProjectId == projectId);
+                tasksQuery = tasksQuery.Where(t => t.ProjectId == projectId);
 
             if (fromDate.HasValue)
-                tasks = tasks.Where(t => t.CreatedAt >= fromDate);
+                tasksQuery = tasksQuery.Where(t => t.CreatedAt >= fromDate);
 
             if (toDate.HasValue)
-                tasks = tasks.Where(t => t.CreatedAt <= toDate);
+                tasksQuery = tasksQuery.Where(t => t.CreatedAt <= toDate);
 
-            var taskList = tasks.ToList();
+            var taskList = tasksQuery.ToList();
+
+            // Prepare data for Google Gantt Chart
+            var ganttData = taskList.Select(t => new
+            {
+                TaskId = t.TaskId.ToString(),
+                TaskName = t.TaskTitle,
+                Resource = t.Project.ProjectName,
+                
+                StartDate = t.CreatedAt.ToString("yyyy-MM-dd"),
+                EndDate = (t.DueDate != default(DateTime))
+               ? t.DueDate.ToString("yyyy-MM-dd")
+               : t.CreatedAt.AddDays(7).ToString("yyyy-MM-dd"),
+                PercentDone = t.Status == "Completed" ? 100 : (t.Status == "In Progress" ? 50 : 0)
+            }).ToList();
 
             return Json(new
             {
                 completed = taskList.Count(t => t.Status == "Completed"),
                 pending = taskList.Count(t => t.Status == "Pending"),
                 inProgress = taskList.Count(t => t.Status == "In Progress"),
-
-                projectNames = taskList
-                    .GroupBy(t => t.Project.ProjectName)
-                    .Select(g => g.Key)
-                    .ToList(),
-
-                tasksPerProject = taskList
-                    .GroupBy(t => t.Project.ProjectName)
-                    .Select(g => g.Count())
-                    .ToList(),
-
-                timelineLabels = taskList
-                    .GroupBy(t => t.CreatedAt.Date)
-                    .Select(g => g.Key.ToString("dd MMM"))
-                    .ToList(),
-
-                timelineData = taskList
-                    .GroupBy(t => t.CreatedAt.Date)
-                    .Select(g => g.Count())
-                    .ToList()
-
+                projectNames = taskList.GroupBy(t => t.Project.ProjectName).Select(g => g.Key).ToList(),
+                tasksPerProject = taskList.GroupBy(t => t.Project.ProjectName).Select(g => g.Count()).ToList(),
+                ganttData = ganttData
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -120,30 +118,22 @@ namespace Project_Managent_System.Controllers
         }
 
         /* ==========================
-             CREATE PROJECT (POST)
+            CREATE PROJECT (POST)
         =========================== */
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateProject(
-            Project project,
-            List<int> SelectedUserIds,
-            HttpPostedFileBase ProjectDocument)
+        public ActionResult CreateProject(Project project, List<int> SelectedUserIds, HttpPostedFileBase ProjectDocument)
         {
             try
             {
                 if (!IsManagerLoggedIn())
                     return RedirectToAction("Login", "Signup_Login");
 
-                ViewBag.Users = new MultiSelectList(
-                    db.Main_Users.ToList(),
-                    "Id",
-                    "FirstName",
-                    SelectedUserIds
-                );
+                // Repopulate ViewBag for the View in case of validation failure
+                ViewBag.Users = new MultiSelectList(db.Main_Users.ToList(), "Id", "FirstName", SelectedUserIds);
 
                 project.Project_Members = Convert.ToString(Session["Name"]);
                 project.Status = "Pending";
-                //project.StartDate = DateTime.Now;
 
                 if (!ModelState.IsValid)
                     return View(project);
@@ -160,23 +150,13 @@ namespace Project_Managent_System.Controllers
                         return View(project);
                     }
 
-                    // Validate extension
                     string extension = Path.GetExtension(ProjectDocument.FileName).ToLower();
-
                     if (extension != ".pdf")
                     {
                         ModelState.AddModelError("", "Only PDF files are allowed.");
                         return View(project);
                     }
 
-                    // Validate MIME type
-                    if (ProjectDocument.ContentType != "application/pdf")
-                    {
-                        ModelState.AddModelError("", "Invalid PDF file.");
-                        return View(project);
-                    }
-
-                    // Safe file name
                     string fileName = Guid.NewGuid() + ".pdf";
                     string uploadPath = Server.MapPath("~/Uploads/Projects/");
 
@@ -203,9 +183,6 @@ namespace Project_Managent_System.Controllers
                 {
                     foreach (var userId in SelectedUserIds)
                     {
-                        if (!db.Main_Users.Any(u => u.Id == userId))
-                            throw new Exception("Invalid user selected.");
-
                         db.ProjectUsers.Add(new ProjectUser
                         {
                             ProjectId = project.ProjectId,
@@ -216,11 +193,17 @@ namespace Project_Managent_System.Controllers
                 }
 
                 TempData["SuccessMessage"] = "Project created successfully.";
+
+                // --- DYNAMIC REDIRECTION LOGIC ---
+                if (Session["Role"]?.ToString() == "Admin")
+                {
+                    return RedirectToAction("ManageProjects", "Admin");
+                }
+
                 return RedirectToAction("ManagerDashboard");
             }
             catch (Exception ex)
             {
-                // Log exception (optional)
                 ModelState.AddModelError("", "Error: " + ex.Message);
                 return View(project);
             }
@@ -331,80 +314,113 @@ namespace Project_Managent_System.Controllers
         /* ==========================
            DELETE PROJECTS (Cascading Child Records)
         ========================== */
-        [HttpPost] // Changed to HttpPost for security
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteProject(int id)
+        // GET: Admin/DeleteProject/5
+        [HttpGet]
+        public ActionResult DeleteProject(int? id)
         {
+            // Authorization check for Admin or Manager
+            if (Session["Role"]?.ToString() != "Admin" && Session["Role"]?.ToString() != "Manager")
+                return RedirectToAction("Login", "Signup_Login");
+
+            if (id == null) return RedirectToAction("ManageProjects", "Admin");
+
+            var project = db.Projects.Find(id);
+            if (project == null) return HttpNotFound();
+
+            // Generate Math Challenge
+            Random rand = new Random();
+            int num1 = rand.Next(1, 10);
+            int num2 = rand.Next(1, 10);
+
+            // Store correct answer in Session for verification
+            Session["ProjectDeleteCaptcha"] = num1 + num2;
+
+            ViewBag.Num1 = num1;
+            ViewBag.Num2 = num2;
+
+            return View(project);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteProject(int id, int captchaAnswer)
+        {
+            // 1. Authorization check
             if (!IsManagerLoggedIn())
                 return RedirectToAction("Login", "Signup_Login");
 
-            // Find the project
+            // 2. Verify Math Challenge Answer
+            int? correctAnswer = Session["ProjectDeleteCaptcha"] as int?;
+
+            // Check if the answer is wrong
+            if (correctAnswer == null || captchaAnswer != correctAnswer)
+            {
+                TempData["ErrorMessage"] = "Incorrect math answer. Deletion cancelled for security.";
+                // IMPORTANT: We return immediately here to stop the deletion logic from running
+                return RedirectToAction("DeleteProject", new { id = id });
+            }
+
+            // 3. Find the project
             var project = db.Projects.FirstOrDefault(p => p.ProjectId == id);
-            if (project == null)
-                return HttpNotFound();
+            if (project == null) return HttpNotFound();
 
             try
             {
-                // 1. Get all Task IDs associated with this project first
-                var projectTasksIds = db.Tasks
-                                        .Where(t => t.ProjectId == id)
-                                        .Select(t => t.TaskId)
-                                        .ToList();
+                // --- START CASCADING DELETE LOGIC ---
+                // This only runs if the captcha check above was successful
 
-                // 2. Remove related Comments 
-                // We check for comments linked to the Project OR linked to any of the Project's Tasks
-                var relatedComments = db.Comments
-                    .Where(c => c.ProjectId == id || projectTasksIds.Contains(c.TaskId))
-                    .ToList();
+                var projectTasksIds = db.Tasks.Where(t => t.ProjectId == id).Select(t => t.TaskId).ToList();
 
-                if (relatedComments.Any())
-                {
-                    db.Comments.RemoveRange(relatedComments);
-                }
+                // Remove related Comments
+                var relatedComments = db.Comments.Where(c => c.ProjectId == id ||
+                    (c.TaskId.HasValue && projectTasksIds.Contains(c.TaskId.Value))).ToList();
+                if (relatedComments.Any()) db.Comments.RemoveRange(relatedComments);
 
-                // 3. Remove related Task Assignments
-                var relatedAssignments = db.Task_Assignments
-                    .Where(ta => projectTasksIds.Contains(ta.TaskId))
-                    .ToList();
+                // Remove Task Assignments
+                var relatedAssignments = db.Task_Assignments.Where(ta => projectTasksIds.Contains(ta.TaskId)).ToList();
+                if (relatedAssignments.Any()) db.Task_Assignments.RemoveRange(relatedAssignments);
 
-                if (relatedAssignments.Any())
-                {
-                    db.Task_Assignments.RemoveRange(relatedAssignments);
-                }
-
-                // 4. Remove related ProjectUsers (Project Members)
+                // Remove ProjectUsers
                 var projectUsers = db.ProjectUsers.Where(pu => pu.ProjectId == id).ToList();
-                if (projectUsers.Any())
-                {
-                    db.ProjectUsers.RemoveRange(projectUsers);
-                }
+                if (projectUsers.Any()) db.ProjectUsers.RemoveRange(projectUsers);
 
-                // 5. Remove the Tasks
+                // Remove Tasks
                 var relatedTasks = db.Tasks.Where(t => t.ProjectId == id).ToList();
-                if (relatedTasks.Any())
-                {
-                    db.Tasks.RemoveRange(relatedTasks);
-                }
+                if (relatedTasks.Any()) db.Tasks.RemoveRange(relatedTasks);
 
-                // 6. Delete the physical PDF file
+                // Delete Associated Files
                 if (!string.IsNullOrEmpty(project.Project_Document))
                 {
                     string filePath = Server.MapPath("~/Uploads/Projects/" + project.Project_Document);
-                    if (System.IO.File.Exists(filePath))
-                        System.IO.File.Delete(filePath);
+                    if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
                 }
 
-                // 7. Finally, remove the Project
+                // 4. Finally remove the Project
                 db.Projects.Remove(project);
                 db.SaveChanges();
+                // --- END CASCADING DELETE LOGIC ---
 
-                TempData["DeletedMessage"] = "Project and all related data deleted successfully.";
-                return RedirectToAction("DisplayProjects");
+                // 5. Clear captcha session
+                Session["ProjectDeleteCaptcha"] = null;
+
+                TempData["SuccessMessage"] = "Project and all related data deleted successfully.";
+
+                // 6. Redirect based on role
+                if (Session["Role"]?.ToString() == "Admin")
+                {
+                    return RedirectToAction("ManageProjects", "Admin");
+                }
+                else
+                {
+                    return RedirectToAction("DisplayProjects", "Manager");
+                }
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Error: " + ex.Message;
-                return RedirectToAction("DisplayProjects");
+                string innerMsg = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                TempData["ErrorMessage"] = "Database Error: " + innerMsg;
+                return RedirectToAction("DeleteProject", new { id = id });
             }
         }
 
@@ -491,7 +507,14 @@ namespace Project_Managent_System.Controllers
                 db.SaveChanges();
 
                 TempData["SuccessMessage"] = "Project updated successfully!";
-                return RedirectToAction("DisplayProjects");
+                if (Session["Role"]?.ToString() == "Admin")
+                {
+                    return RedirectToAction("ManageProjects", "Admin");
+                }
+                else
+                {
+                    return RedirectToAction("DisplayProjects", "Manager");
+                }
             }
             catch (Exception ex)
             {

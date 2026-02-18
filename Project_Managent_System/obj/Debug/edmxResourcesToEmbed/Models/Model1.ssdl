@@ -5,10 +5,10 @@
       <PropertyRef Name="CommentId" />
     </Key>
     <Property Name="CommentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="ProjectId" Type="int" Nullable="false" />
-    <Property Name="TaskId" Type="int" Nullable="false" />
+    <Property Name="ProjectId" Type="int" />
+    <Property Name="TaskId" Type="int" />
     <Property Name="UserId" Type="int" Nullable="false" />
-    <Property Name="Messaage" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Message" Type="nvarchar(max)" Nullable="false" />
     <Property Name="CreatedAt" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="Main_Users">
@@ -71,7 +71,7 @@
     <Property Name="UpdatedAt" Type="datetime" Nullable="false" />
   </EntityType>
   <Association Name="FK_Comments_Project">
-    <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+    <End Role="Projects" Type="Self.Projects" Multiplicity="0..1" />
     <End Role="Comments" Type="Self.Comments" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Projects">
@@ -83,7 +83,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_Comments_Task">
-    <End Role="Tasks" Type="Self.Tasks" Multiplicity="1" />
+    <End Role="Tasks" Type="Self.Tasks" Multiplicity="0..1" />
     <End Role="Comments" Type="Self.Comments" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Tasks">

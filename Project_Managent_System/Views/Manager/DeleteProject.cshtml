@@ -1,0 +1,30 @@
+﻿@model Project_Managent_System.Models.Project
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+<div class="container py-5 text-center">
+    <div class="card shadow-sm border-0 p-5 mx-auto" style="max-width: 500px;">
+        <h2 class="text-danger mb-4">Confirm Deletion</h2>
+        <p>You are about to delete <strong>@Model.ProjectName</strong>. This will also remove all associated tasks and comments.</p>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.ProjectId)
+
+            <div class="alert alert-warning py-3">
+                <label class="mb-2 d-block">Solve this to confirm: <strong>@ViewBag.Num1 + @ViewBag.Num2 = ?</strong></label>
+                <input type="number" name="captchaAnswer" class="form-control text-center mx-auto w-50" required />
+            </div>
+
+            <div class="mt-4">
+                <a href="@Url.Action("ManageProjects", "Admin")" class="btn btn-light px-4">Cancel</a>
+                <button type="submit" class="btn btn-danger px-4">Delete Permanently</button>
+            </div>
+        }
+    </div>
+</div>

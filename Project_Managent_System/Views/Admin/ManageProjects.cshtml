@@ -10,7 +10,7 @@
             <h2 class="fw-bold text-slate-900 m-0">Project Repository</h2>
             <p class="text-muted small">TaskZip Management Interface</p>
         </div>
-        <a href="@Url.Action("AddProject", "Admin")" class="btn btn-indigo px-4 py-2 rounded-3 shadow-sm">
+        <a href="@Url.Action("CreateProject", "Manager")" class="btn btn-indigo px-4 py-2 rounded-3 shadow-sm">
             <i class="bi bi-plus-lg me-2"></i> New Project
         </a>
     </div>
@@ -75,13 +75,13 @@
                                     </button>
 
                                     @* ✏️ Edit Button *@
-                                    <a href="@Url.Action("EditProject", "Admin", new { id = item.ProjectId })"
+                                    <a href="@Url.Action("EditProject", "Manager", new { id = item.ProjectId })"
                                        class="btn btn-sm btn-light-indigo rounded-circle" title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
                                     @* 🗑️ Delete Button *@
-                                    <a href="@Url.Action("DeleteProject", "Admin", new { id = item.ProjectId })"
+                                    <a href="@Url.Action("DeleteProject", "Manager", new { id = item.ProjectId })"
                                        class="btn btn-sm btn-light-danger rounded-circle"
                                        onclick="return confirm('Delete Project?')" title="Delete">
                                         <i class="bi bi-trash"></i>

@@ -107,6 +107,94 @@ namespace Project_Managent_System.Controllers
             return View(newUser);
         }
 
+        // GET: Edit Admin/ManageUsers
+
+        // ===============================
+        // 👥 EDIT USER: Fetch and Update
+        // ===============================
+        // GET: Admin/EditUsers/5
+        [HttpGet]
+        public ActionResult EditUsers(int? id)
+        {
+            if (!IsAdminAuthorized()) return RedirectToLogin();
+
+            if (id == null)
+            {
+                TempData["ErrorMessage"] = "No User ID provided.";
+                return RedirectToAction("ManageUsers");
+            }
+
+            // Find the existing user from the database
+            var user = db.Main_Users.Find(id);
+
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            // We pass the full user object to the View, including the password (which stays in a Hidden field)
+            return View(user);
+        }
+
+        // POST: Admin/EditUsers/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditUsers(Main_Users updatedUser)
+        {
+            if (!IsAdminAuthorized()) return RedirectToLogin();
+
+            // 1. Force remove Password from validation. 
+            // This stops the "Password field is required" error even if the model has [Required].
+            ModelState.Remove("Password");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // 2. Check for duplicate email (excluding the user being edited)
+                    bool emailExists = db.Main_Users.Any(u => u.Email == updatedUser.Email && u.Id != updatedUser.Id);
+                    if (emailExists)
+                    {
+                        ModelState.AddModelError("Email", "This professional email is already assigned to another account.");
+                        return View(updatedUser);
+                    }
+
+                    // 3. Attach the model to the context and mark specific properties as modified
+                    db.Main_Users.Attach(updatedUser);
+                    var entry = db.Entry(updatedUser);
+
+                    // Tell EF which columns to include in the SQL UPDATE statement
+                    entry.Property(e => e.FirstName).IsModified = true;
+                    entry.Property(e => e.LastName).IsModified = true;
+                    entry.Property(e => e.Gender).IsModified = true;
+                    entry.Property(e => e.Role).IsModified = true;
+                    entry.Property(e => e.Email).IsModified = true;
+
+                    // 4. CRITICAL: Explicitly tell EF NOT to touch the password column
+                    entry.Property(e => e.Password).IsModified = false;
+
+                    db.SaveChanges();
+
+                    TempData["SuccessMessage"] = "Profile for " + updatedUser.FirstName + " has been updated!";
+                    return RedirectToAction("ManageUsers");
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    // Extract the exact field causing the failure for easier debugging
+                    foreach (var error in dbEx.EntityValidationErrors.SelectMany(x => x.ValidationErrors))
+                    {
+                        ModelState.AddModelError("", "Field: " + error.PropertyName + " - " + error.ErrorMessage);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Database Update Error: " + ex.Message);
+                }
+            }
+
+            // If we reach here, validation failed; return to view with current data
+            return View(updatedUser);
+        }
         //MANAGE USERS
         // GET: Admin/ManageUsers
         [HttpGet]

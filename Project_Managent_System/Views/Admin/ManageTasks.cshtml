@@ -10,16 +10,16 @@
             <h2 class="fw-bold text-slate-900 m-0">Task Repository</h2>
             <p class="text-muted small">Overview of all project tasks and performance tracking</p>
         </div>
-        <div>
+        @*<div>
             <a href="@Url.Action("Create", "Tasks")" class="btn btn-indigo px-4 py-2 rounded-3 shadow-sm">
                 <i class="bi bi-plus-lg me-2"></i> Create New Task
             </a>
-        </div>
+        </div>*@
     </div>
 
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
                         <th class="ps-4 py-3 text-uppercase fs-xs fw-bold text-muted">Task Details</th>
@@ -32,10 +32,12 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
+                        var collapseId = "taskDesc_" + item.TaskId;
+
+                        <tr class="task-main-row">
                             <td class="ps-4">
                                 <div class="fw-bold text-slate-900">@item.TaskTitle</div>
-                                <div class="text-muted fs-xs text-truncate" style="max-width: 250px;">@item.TaskDescription</div>
+                                @*<div class="text-muted fs-xs text-truncate" style="max-width: 250px;">@item.TaskDescription</div>*@
                             </td>
                             <td class="text-center">
                                 <div class="fw-medium text-indigo small">@item.Project.ProjectName</div>
@@ -52,21 +54,38 @@
                             </td>
                             <td class="pe-4 text-center">
                                 <div class="d-flex justify-content-center gap-2">
-                                    <button class="btn btn-sm btn-light-primary rounded-circle"
-                                            onclick="openComments(@item.TaskId, 'Task')"
-                                            title="Open Task Discussion">
+                                    <button class="btn btn-sm btn-light-primary rounded-circle" onclick="openComments(@item.TaskId, 'Task')" title="Open Task Discussion">
                                         <i class="bi bi-chat-dots-fill"></i>
                                     </button>
-
                                     <a href="@Url.Action("Edit", "Tasks", new { id = item.TaskId })" class="btn btn-sm btn-light-indigo rounded-circle" title="Edit">
                                         <i class="bi bi-pencil-fill"></i>
                                     </a>
-                                    <a href="@Url.Action("Details", "Tasks", new { id = item.TaskId })" class="btn btn-sm btn-light-secondary rounded-circle" title="Details">
+                                    @* Toggle Button *@
+                                    <button class="btn btn-sm btn-light-secondary rounded-circle btn-expand"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#@collapseId"
+                                            aria-expanded="false">
                                         <i class="bi bi-eye-fill"></i>
-                                    </a>
+                                    </button>
                                     <a href="@Url.Action("Delete", "Tasks", new { id = item.TaskId })" class="btn btn-sm btn-light-danger rounded-circle" title="Delete" onclick="return confirm('Permanently delete this task?')">
                                         <i class="bi bi-trash-fill"></i>
                                     </a>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="description-row">
+                            <td colspan="5" class="p-0 border-0">
+                                <div id="@collapseId" class="collapse accordion-collapse">
+                                    <div class="description-body p-4 mx-4 mb-3 rounded-bottom-4 shadow-inner">
+                                        <h6 class="fw-bold text-indigo small mb-2">
+                                            <i class="bi bi-text-paragraph me-2"></i>Full Description
+                                        </h6>
+                                        <div class="description-text">
+                                            @item.TaskDescription
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -96,6 +115,11 @@
         border-radius: 1rem !important;
     }
 
+    .rounded-bottom-4 {
+        border-bottom-left-radius: 1rem;
+        border-bottom-right-radius: 1rem;
+    }
+
     .btn-indigo {
         background: var(--indigo);
         color: white;
@@ -123,7 +147,6 @@
         border: none;
     }
 
-    /* Added style for the Comment Button */
     .btn-light-primary {
         background: #e0e7ff;
         color: #4338ca;
@@ -140,5 +163,69 @@
         background: #f1f5f9;
         color: #64748b;
         border: none;
+    }
+
+    /* 1. Prevent Column Shifting */
+    .table {
+        table-layout: fixed;
+        width: 100% !important;
+    }
+
+    /* 2. Smooth Slide Animation Logic */
+    .collapse {
+        transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .description-body {
+        background-color: #f8fafc; /* Very light slate */
+        border-left: 4px solid var(--indigo);
+        border-bottom: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+    }
+
+    /* 3. Text Handling to prevent width expansion */
+    .description-text {
+        font-size: 0.875rem;
+        color: #475569;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-wrap: break-word; /* Crucial for long strings/links */
+        overflow-wrap: break-word;
+    }
+
+    /* 4. Action Button Styling when active */
+    .btn-expand[aria-expanded="true"] {
+        background-color: var(--indigo) !important;
+        color: white !important;
+        transform: scale(1.1);
+        transition: all 0.2s ease;
+    }
+
+    /* 5. Clean up table hover */
+    .description-row:hover {
+        background-color: transparent !important;
+    }
+
+    /* Custom styles for expansion */
+    .task-main-row:hover {
+        background-color: rgba(79, 70, 229, 0.02);
+    }
+
+    .btn-expand[aria-expanded="true"] {
+        background-color: var(--indigo) !important;
+        color: white !important;
+    }
+
+    .shadow-inner {
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .border-indigo {
+        border-color: var(--indigo) !important;
+    }
+
+    /* Transition fix for smooth expansion */
+    .collapse {
+        transition: all 0.35s ease-in-out;
     }
 </style>

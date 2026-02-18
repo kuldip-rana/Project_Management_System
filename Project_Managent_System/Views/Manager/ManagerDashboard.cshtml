@@ -4,14 +4,12 @@
 }
 
 <style>
-    /* Gradient Text for Header */
     .text-gradient {
         background: -webkit-linear-gradient(45deg, var(--primary), var(--primary-dark));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
-    /* Card Hover Effect */
     .hover-card {
         transition: transform 0.2s ease-in-out, box-shadow 0.2s;
     }
@@ -21,15 +19,20 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
         }
 
-    /* Custom Input styling to match theme */
     .form-control:focus, .form-select:focus {
         border-color: var(--primary);
         box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
     }
+
+    /* Gantt Chart Container Styling */
+    #gantt_chart {
+        overflow-x: auto;
+        min-height: 400px;
+        width: 100%;
+    }
 </style>
 
 <div class="container-fluid px-4 py-4">
-
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h3 class="fw-bold text-dark mb-1">Dashboard</h3>
@@ -49,31 +52,30 @@
         <div class="card-body p-4">
             <h6 class="fw-bold text-uppercase text-muted small mb-3" style="letter-spacing: 1px;">Filter Data</h6>
             <div class="row g-3 align-items-end">
-
                 <div class="col-md-4">
                     <label class="form-label fw-semibold small text-muted">Select Project</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0"><i class="bi bi-folder text-primary"></i></span>
                         <select class="form-select border-start-0 ps-0 bg-light" id="projectId">
                             <option value="">All Projects</option>
-                            @foreach (var p in ViewBag.Projects as List<SelectListItem>)
+                            @if (ViewBag.Projects != null)
                             {
-                                <option value="@p.Value">@p.Text</option>
+                                foreach (var p in ViewBag.Projects as List<SelectListItem>)
+                                {
+                                    <option value="@p.Value">@p.Text</option>
+                                }
                             }
                         </select>
                     </div>
                 </div>
-
                 <div class="col-md-3">
                     <label class="form-label fw-semibold small text-muted">From Date</label>
                     <input type="date" id="fromDate" class="form-control bg-light" />
                 </div>
-
                 <div class="col-md-3">
                     <label class="form-label fw-semibold small text-muted">To Date</label>
                     <input type="date" id="toDate" class="form-control bg-light" />
                 </div>
-
                 <div class="col-md-2">
                     <button class="btn w-100 text-white fw-semibold"
                             style="background-color: var(--primary); box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);"
@@ -81,20 +83,15 @@
                         <i class="bi bi-funnel-fill me-1"></i> Apply
                     </button>
                 </div>
-
             </div>
         </div>
     </div>
 
     <div class="row g-4">
-
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 rounded-4 h-100 hover-card">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0">Task Status</h6>
-                        <i class="bi bi-pie-chart-fill text-muted"></i>
-                    </div>
+                    <h6 class="fw-bold mb-3">Task Status</h6>
                     <div style="position: relative; height: 250px;">
                         <canvas id="statusChart"></canvas>
                     </div>
@@ -105,10 +102,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 rounded-4 h-100 hover-card">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0">Workload Distribution</h6>
-                        <i class="bi bi-bar-chart-fill text-muted"></i>
-                    </div>
+                    <h6 class="fw-bold mb-3">Workload Distribution</h6>
                     <div style="position: relative; height: 250px;">
                         <canvas id="projectChart"></canvas>
                     </div>
@@ -120,43 +114,41 @@
             <div class="card shadow-sm border-0 rounded-4 hover-card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0">Task Creation Trends</h6>
-                        <i class="bi bi-graph-up-arrow text-muted"></i>
+                        <h6 class="fw-bold mb-0">Project Timeline (Gantt Chart)</h6>
+                        <i class="bi bi-calendar-range text-muted"></i>
                     </div>
-                    <div style="position: relative; height: 300px;">
-                        <canvas id="timelineChart"></canvas>
+
+                    <div id="gantt_chart">
+                        <div class="text-center p-5">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="mt-2 text-muted">Loading visualization...</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
 @section Scripts {
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
     <script>
-        // --- THEME COLORS (Matches CSS Variables) ---
+        // Load Google Charts
+        google.charts.load('current', { 'packages': ['gantt'] });
+
+        // Ensure dashboard loads ONLY after Google Charts is ready
+        google.charts.setOnLoadCallback(loadDashboard);
+
         const themeColors = {
-            primary: '#6366F1',    // Indigo
-            primaryLight: '#818cf8',
-            accent: '#F43F5E',     // Coral
-            success: '#10B981',    // Mint Green
-            warning: '#F59E0B',    // Amber
-            dark: '#1E293B',       // Slate
-            gridLines: '#e2e8f0'   // Light Gray for chart grids
+            primary: '#6366F1',
+            success: '#10B981',
+            warning: '#F59E0B',
+            gridLines: '#e2e8f0'
         };
 
-        let statusChart, projectChart, timelineChart;
-
-        // Common Chart Options for cleaner look
-        const commonOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
-            },
-            layout: { padding: 10 }
-        };
+        let statusChart, projectChart;
+        let lastGanttData = []; // Store data for resize events
 
         function loadDashboard() {
             $.ajax({
@@ -168,38 +160,24 @@
                     toDate: $('#toDate').val()
                 },
                 success: function (res) {
-
-                    // ===== 1. PIE CHART (Donut Style is more modern) =====
+                    // 1. Doughnut Chart
                     if (statusChart) statusChart.destroy();
-                    const statusCtx = document.getElementById('statusChart').getContext('2d');
-                    statusChart = new Chart(statusCtx, {
-                        type: 'doughnut', // Changed to Doughnut for modern look
+                    statusChart = new Chart(document.getElementById('statusChart'), {
+                        type: 'doughnut',
                         data: {
                             labels: ['Completed', 'In Progress', 'Pending'],
                             datasets: [{
                                 data: [res.completed, res.inProgress, res.pending],
-                                backgroundColor: [
-                                    themeColors.success, // Completed (Mint)
-                                    themeColors.primary, // In Progress (Indigo)
-                                    themeColors.warning  // Pending (Amber)
-                                ],
-                                borderWidth: 0,
-                                hoverOffset: 4
+                                backgroundColor: [themeColors.success, themeColors.primary, themeColors.warning],
+                                borderWidth: 0
                             }]
                         },
-                        options: {
-                            ...commonOptions,
-                            cutout: '70%', // Thinner ring
-                            plugins: {
-                                legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle' } }
-                            }
-                        }
+                        options: { cutout: '75%', maintainAspectRatio: false }
                     });
 
-                    // ===== 2. BAR CHART =====
+                    // 2. Bar Chart
                     if (projectChart) projectChart.destroy();
-                    const projectCtx = document.getElementById('projectChart').getContext('2d');
-                    projectChart = new Chart(projectCtx, {
+                    projectChart = new Chart(document.getElementById('projectChart'), {
                         type: 'bar',
                         data: {
                             labels: res.projectNames,
@@ -207,77 +185,73 @@
                                 label: 'Total Tasks',
                                 data: res.tasksPerProject,
                                 backgroundColor: themeColors.primary,
-                                borderRadius: 6, // Rounded bars
-                                barThickness: 30, // Thinner, elegant bars
+                                borderRadius: 6
                             }]
                         },
-                        options: {
-                            ...commonOptions,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    grid: { color: themeColors.gridLines, borderDash: [5, 5] },
-                                    ticks: { font: { family: 'Inter' } }
-                                },
-                                x: {
-                                    grid: { display: false },
-                                    ticks: { font: { family: 'Inter' } }
-                                }
-                            }
-                        }
+                        options: { maintainAspectRatio: false }
                     });
 
-                    // ===== 3. LINE CHART =====
-                    if (timelineChart) timelineChart.destroy();
-
-                    // Create gradient for line chart
-                    const timelineCtx = document.getElementById('timelineChart').getContext('2d');
-                    let gradient = timelineCtx.createLinearGradient(0, 0, 0, 400);
-                    gradient.addColorStop(0, 'rgba(244, 63, 94, 0.2)'); // Coral low opacity
-                    gradient.addColorStop(1, 'rgba(244, 63, 94, 0)');
-
-                    timelineChart = new Chart(timelineCtx, {
-                        type: 'line',
-                        data: {
-                            labels: res.timelineLabels,
-                            datasets: [{
-                                label: 'Tasks Created',
-                                data: res.timelineData,
-                                borderColor: themeColors.accent, // Coral Line
-                                backgroundColor: gradient,
-                                tension: 0.4, // Smooth curve
-                                pointBackgroundColor: '#fff',
-                                pointBorderColor: themeColors.accent,
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
-                                fill: true
-                            }]
-                        },
-                        options: {
-                            ...commonOptions,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    grid: { color: themeColors.gridLines },
-                                },
-                                x: {
-                                    grid: { display: false }
-                                }
-                            }
-                        }
-                    });
-                },
-                error: function (err) {
-                    console.error("Error loading dashboard data", err);
-                    // Optional: Show a toast error here
+                    // 3. Google Gantt Chart
+                    lastGanttData = res.ganttData;
+                    drawGantt(res.ganttData);
                 }
             });
         }
 
-        // Initial Load
-        $(document).ready(function () {
-            loadDashboard();
-        });
+        function drawGantt(serverData) {
+            const container = document.getElementById('gantt_chart');
 
+            if (!serverData || serverData.length === 0) {
+                container.innerHTML = '<p class="text-center p-5 text-muted">No task data available for the selected filters.</p>';
+                return;
+            }
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Task ID');
+            data.addColumn('string', 'Task Name');
+            data.addColumn('string', 'Resource');
+            data.addColumn('date', 'Start Date');
+            data.addColumn('date', 'End Date');
+            data.addColumn('number', 'Duration');
+            data.addColumn('number', 'Percent Complete');
+            data.addColumn('string', 'Dependencies');
+
+            var rows = [];
+            serverData.forEach(function (item) {
+                rows.push([
+                    item.TaskId,
+                    item.TaskName,
+                    item.Resource,
+                    new Date(item.StartDate),
+                    new Date(item.EndDate),
+                    null,
+                    item.PercentDone,
+                    null
+                ]);
+            });
+
+            data.addRows(rows);
+
+            var options = {
+                height: serverData.length * 45 + 50,
+                gantt: {
+                    trackHeight: 40,
+                    labelStyle: { fontName: 'Inter', fontSize: 13 },
+                    palette: [
+                        { "color": "#6366F1", "dark": "#4F46E5", "light": "#EEF2FF" }
+                    ]
+                }
+            };
+
+            var chart = new google.visualization.Gantt(container);
+            chart.draw(data, options);
+        }
+
+        // Redraw Gantt chart on window resize for responsiveness
+        $(window).resize(function () {
+            if (lastGanttData.length > 0) {
+                drawGantt(lastGanttData);
+            }
+        });
     </script>
 }

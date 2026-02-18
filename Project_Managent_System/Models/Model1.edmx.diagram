@@ -17,11 +17,11 @@
         <AssociationConnector Association="PMS_DatabaseModel.FK_Tasks_manager_" />
         <AssociationConnector Association="PMS_DatabaseModel.FK_Task_Projects_" />
         <AssociationConnector Association="PMS_DatabaseModel.FK_TaskAssignments_Task_" />
-        <EntityTypeShape EntityType="PMS_DatabaseModel.Comment" Width="1.5" PointX="4.25" PointY="5.375" />
+        <EntityTypeShape EntityType="PMS_DatabaseModel.Comment" Width="1.5" PointX="10.875" PointY="4.375" />
         <AssociationConnector Association="PMS_DatabaseModel.FK_Comments_Project" />
         <AssociationConnector Association="PMS_DatabaseModel.FK_Comments_Task" />
         <AssociationConnector Association="PMS_DatabaseModel.FK_Comments_Users" />
-      </Diagram>
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

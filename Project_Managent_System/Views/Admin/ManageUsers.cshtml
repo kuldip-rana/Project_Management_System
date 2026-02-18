@@ -70,12 +70,12 @@
                             </td>
                             <td class="pe-4 text-center">
                                 <div class="d-flex justify-content-center gap-2">
-                                    <a href="@Url.Action("Edit", "Admin", new { id = item.Id })" class="btn btn-sm btn-light-indigo rounded-circle" title="Edit Profile">
+                                    <a href="@Url.Action("EditUsers", "Admin", new { id = item.Id })" class="btn btn-sm btn-light-indigo rounded-circle" title="Edit Profile">
                                         <i class="bi bi-pencil-fill"></i>
                                     </a>
-                                    <a href="@Url.Action("Details", "Admin", new { id = item.Id })" class="btn btn-sm btn-light-secondary rounded-circle" title="View Details">
+                                    @*<a href="@Url.Action("Details", "Admin", new { id = item.Id })" class="btn btn-sm btn-light-secondary rounded-circle" title="View Details">
                                         <i class="bi bi-eye-fill"></i>
-                                    </a>
+                                    </a>*@
                                     <a href="@Url.Action("DeleteUser", "Admin", new { id = item.Id })" class="btn btn-sm btn-light-danger rounded-circle" title="Remove User" onclick="return confirm('Delete this user permanently?')">
                                         <i class="bi bi-trash-fill"></i>
                                     </a>

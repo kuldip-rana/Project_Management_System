@@ -654,6 +654,8 @@
     <Content Include="Views\Admin\DeleteUser.cshtml" />
     <Content Include="Views\Admin\ManageProjects.cshtml" />
     <Content Include="Views\Admin\ManageTasks.cshtml" />
+    <Content Include="Views\Admin\EditUsers.cshtml" />
+    <Content Include="Views\Manager\DeleteProject.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

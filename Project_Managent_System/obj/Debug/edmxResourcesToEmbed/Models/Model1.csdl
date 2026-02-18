@@ -195,17 +195,17 @@
       <PropertyRef Name="CommentId" />
     </Key>
     <Property Name="CommentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="ProjectId" Type="Int32" Nullable="false" />
-    <Property Name="TaskId" Type="Int32" Nullable="false" />
+    <Property Name="ProjectId" Type="Int32" />
+    <Property Name="TaskId" Type="Int32" />
     <Property Name="UserId" Type="Int32" Nullable="false" />
-    <Property Name="Messaage" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Message" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
     <NavigationProperty Name="Project" Relationship="PMS_DatabaseModel.FK_Comments_Project" FromRole="Comment" ToRole="Project" />
     <NavigationProperty Name="Task" Relationship="PMS_DatabaseModel.FK_Comments_Task" FromRole="Comment" ToRole="Task" />
     <NavigationProperty Name="Main_Users" Relationship="PMS_DatabaseModel.FK_Comments_Users" FromRole="Comment" ToRole="Main_Users" />
   </EntityType>
   <Association Name="FK_Comments_Project">
-    <End Type="PMS_DatabaseModel.Project" Role="Project" Multiplicity="1" />
+    <End Type="PMS_DatabaseModel.Project" Role="Project" Multiplicity="0..1" />
     <End Type="PMS_DatabaseModel.Comment" Role="Comment" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Project">
@@ -217,7 +217,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_Comments_Task">
-    <End Type="PMS_DatabaseModel.Task" Role="Task" Multiplicity="1" />
+    <End Type="PMS_DatabaseModel.Task" Role="Task" Multiplicity="0..1" />
     <End Type="PMS_DatabaseModel.Comment" Role="Comment" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Task">

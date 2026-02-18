@@ -15,10 +15,10 @@ namespace Project_Managent_System.Models
     public partial class Comment
     {
         public int CommentId { get; set; }
-        public int ProjectId { get; set; }
-        public int TaskId { get; set; }
+        public Nullable<int> ProjectId { get; set; }
+        public Nullable<int> TaskId { get; set; }
         public int UserId { get; set; }
-        public string Messaage { get; set; }
+        public string Message { get; set; }
         public System.DateTime CreatedAt { get; set; }
     
         public virtual Project Project { get; set; }

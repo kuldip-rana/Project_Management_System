@@ -1,0 +1,208 @@
+﻿@model Project_Managent_System.Models.Main_Users
+
+@{
+    ViewBag.Title = "Edit Profile | TaskZIP";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-5" style="background-color: #f4f7fc; min-height: 100vh; font-family: 'Inter', sans-serif;">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-9 col-xl-8">
+
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h1 class="h4 text-gray-800 font-weight-bold mb-0">Employee Settings</h1>
+                <a href="@Url.Action("ManageUsers")" class="btn btn-white btn-sm shadow-sm rounded-pill px-3 border">
+                    <i class="fas fa-chevron-left mr-1 small"></i> Back to Directory
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+                <div class="card-body p-0">
+                    <div class="row no-gutters">
+
+                        <div class="col-md-4 bg-light text-center py-5 border-right" style="background: linear-gradient(180deg, #f8f9fc 0%, #eef2f7 100%);">
+                            <div class="position-relative d-inline-block mb-3">
+                                <div class="avatar-display d-flex align-items-center justify-content-center text-white shadow"
+                                     style="width: 110px; height: 110px; background: #4e73df; border-radius: 30px; font-size: 2.2rem; font-weight: 700; transform: rotate(-3deg);">
+                                    @((Model.FirstName?.Length > 0 ? Model.FirstName.Substring(0, 1) : "U") +
+                                      (Model.LastName?.Length > 0 ? Model.LastName.Substring(0, 1) : ""))
+                                </div>
+                                <div class="status-indicator bg-success border border-white" style="width: 15px; height: 15px; border-radius: 50%; position: absolute; bottom: 5px; right: 5px;"></div>
+                            </div>
+
+                            <h5 class="font-weight-bold text-dark mb-1">@Model.FirstName @Model.LastName</h5>
+                            <span class="badge badge-soft-primary mb-3">@Model.Role Access</span>
+
+                            <div class="mt-4 px-4">
+                                <div class="p-2 bg-white rounded shadow-sm border mb-2">
+                                    <small class="text-muted d-block text-uppercase font-weight-bold" style="letter-spacing: 1px; font-size: 10px;">System Identity</small>
+                                    <span class="text-dark font-weight-bold">#U-@Model.Id</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 bg-white py-5 px-5">
+                            <h6 class="text-primary font-weight-bold text-uppercase mb-4" style="letter-spacing: 1.5px; font-size: 12px;">Account Details</h6>
+
+                            @using (Html.BeginForm())
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(model => model.Id)
+                                @Html.HiddenFor(model => model.Password) @* Keeps logic safe in background *@
+
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label class="saas-label">First Name</label>
+                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control saas-input", placeholder = "e.g. Dev" } })
+                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger small" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="saas-label">Last Name</label>
+                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control saas-input", placeholder = "e.g. Solanki" } })
+                                        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger small" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="saas-label">Professional Email</label>
+                                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control saas-input bg-locked", @readonly = "readonly" } })
+                                    <small class="form-text text-muted mt-2"><i class="fas fa-info-circle mr-1"></i> Email is a primary key and cannot be edited.</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="saas-label">Security Password</label>
+                                    <div class="input-group saas-input-group">
+                                        <input type="password" id="passInput" class="form-control border-right-0 bg-locked" readonly value="@Model.Password" style="border-top-left-radius: 10px; border-bottom-left-radius: 10px;">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-light border border-left-0 bg-locked" type="button" id="btnToggle" style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;">
+                                                <i class="fas fa-eye text-muted" id="eyeIcon"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <small class="form-text text-muted mt-2">Visible to Admin for identity verification purposes.</small>
+                                </div>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-6 form-group">
+                                        <label class="saas-label">Gender</label>
+                                        @Html.DropDownListFor(model => model.Gender, new SelectList(new[] { "Male", "Female", "Other" }), new { @class = "form-control saas-input" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="saas-label">Access Role</label>
+                                        @Html.DropDownListFor(model => model.Role, new SelectList(new[] { "Admin", "Manager", "User" }), new { @class = "form-control saas-input" })
+                                    </div>
+                                </div>
+
+                                <div class="mt-5 pt-3 border-top d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary btn-saas shadow">
+                                        Update Profile <i class="fas fa-check-circle ml-2"></i>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+    #btnToggle {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        min-width: 45px;
+        z-index: 4; /* Ensures it sits above the input background */
+        cursor: pointer;
+    }
+
+    #eyeIcon {
+        font-family: "Font Awesome 5 Free"; /* Ensures correct font face */
+        font-weight: 900;
+        color: #6e707e !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    /* SaaS Theme Custom CSS */
+    .saas-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #4e73df;
+        text-uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .saas-input {
+        height: 48px;
+        border-radius: 10px;
+        border: 1.5px solid #eaecf4;
+        background-color: #fff;
+        padding: 10px 18px;
+        transition: all 0.2s ease-in-out;
+        font-size: 14px;
+        color: #5a5c69;
+    }
+
+        .saas-input:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.1);
+            outline: none;
+        }
+
+    .bg-locked {
+        background-color: #f8f9fc !important;
+        cursor: not-allowed;
+        border-color: #eaecf4;
+    }
+
+    .btn-saas {
+        padding: 12px 35px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14px;
+        background: #4e73df;
+        border: none;
+        transition: transform 0.2s;
+    }
+
+        .btn-saas:hover {
+            background: #224abe;
+            transform: translateY(-2px);
+        }
+
+    .badge-soft-primary {
+        background-color: rgba(78, 115, 223, 0.1);
+        color: #4e73df;
+        font-weight: 700;
+        border-radius: 6px;
+    }
+
+    /* Fix for Bootstrap input groups with rounded corners */
+    .saas-input-group .form-control {
+        height: 48px;
+        border: 1.5px solid #eaecf4;
+        font-size: 14px;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.getElementById('btnToggle').addEventListener('click', function () {
+            const passField = document.getElementById('passInput');
+            const icon = document.getElementById('eyeIcon');
+
+            if (passField.type === "password") {
+                passField.type = "text";
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passField.type = "password";
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+    </script>
+}
