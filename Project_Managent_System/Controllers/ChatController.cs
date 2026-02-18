@@ -12,7 +12,6 @@ namespace Project_Managent_System.Controllers
     {
         private readonly PMS_DatabaseEntities2 db = new PMS_DatabaseEntities2();
 
-        // GET: Fetch conversation
         [HttpGet]
         public ActionResult GetThread(int id, string type)
         {
@@ -30,7 +29,7 @@ namespace Project_Managent_System.Controllers
                 {
                     UserName = c.Main_Users.FirstName,
                     Role = c.Main_Users.Role,
-                    Message = c.Messaage, // Matching your DB spelling 'Messaage'
+                        Message = c.Message,
                     CreatedAt = c.CreatedAt
                 }).ToList();
 
@@ -40,7 +39,6 @@ namespace Project_Managent_System.Controllers
             return PartialView("~/Views/Shared/_CommentThread.cshtml", comments);
         }
 
-        // POST: Save message
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult PostComment(int TargetId, string Message, string ChatType)
