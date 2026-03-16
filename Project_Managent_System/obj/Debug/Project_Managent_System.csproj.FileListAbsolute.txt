@@ -237,3 +237,16 @@ D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Rota
 D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\BouncyCastle.Crypto.dll
 D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\itextsharp.dll
 D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\itextsharp.xml
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.AspNet.SignalR.Core.dll
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.Owin.dll
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.Owin.Host.SystemWeb.dll
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.Owin.Security.dll
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Owin.dll
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.AspNet.SignalR.Core.pdb
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.AspNet.SignalR.Core.xml
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.AspNet.SignalR.SystemWeb.pdb
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.Owin.xml
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.Owin.Host.SystemWeb.xml
+D:\VisualStudioProjects\Project_Managent_System\Project_Managent_System\bin\Microsoft.Owin.Security.xml

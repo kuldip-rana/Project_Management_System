@@ -1,13 +1,14 @@
 ﻿@model IEnumerable<Project_Managent_System.ViewModels.CommentItem>
 
-<div class="chat-wrapper d-flex flex-column h-100" style="background-color: #efeae2;">
-    <div id="chatMessages" class="chat-messages flex-grow-1 p-3" style="overflow-y: auto; max-height: 70vh;">
+<div class="chat-wrapper d-flex flex-column h-100" style="background-color: #F8FAFC;">
+    <div id="chatMessages" class="chat-messages flex-grow-1 p-4" style="overflow-y: auto; max-height: 72vh; scroll-behavior: smooth;">
         @if (!Model.Any())
         {
-            <div class="text-center mt-5">
-                <span class="badge bg-white text-muted shadow-sm px-3 py-2 rounded-pill">
-                    No comments yet. Start the conversation!
-                </span>
+            <div id="noMessagesNotice" class="text-center mt-5">
+                <div class="opacity-50 mb-3">
+                    <i class="bi bi-chat-square-text" style="font-size: 3rem;"></i>
+                </div>
+                <p class="text-muted fw-medium">No messages yet. Lead the way!</p>
             </div>
         }
         else
@@ -15,38 +16,31 @@
             DateTime? lastDate = null;
             foreach (var item in Model)
             {
-                if (lastDate?.Date != item.CreatedAt.Date)
+                if (lastDate == null || lastDate.Value.Date != item.CreatedAt.Date)
                 {
-                    <div class="text-center my-3">
-                        <span class="badge shadow-sm px-3" style="background-color: #d1d7db; color: #54656f; border-radius: 7px;">
-                            @(item.CreatedAt.Date == DateTime.Today ? "TODAY" : item.CreatedAt.ToString("MMM dd, yyyy").ToUpper())
+                    <div class="text-center my-4 position-relative">
+                        <hr class="position-absolute w-100 top-50 start-0 m-0 opacity-10">
+                        <span class="badge position-relative bg-white text-uppercase border px-3 py-2 text-muted" style="font-size: 0.7rem; letter-spacing: 0.5px; z-index: 1;">
+                            @(item.CreatedAt.Date == DateTime.Today ? "Today" : item.CreatedAt.ToString("MMM dd, yyyy"))
                         </span>
                     </div>
                     lastDate = item.CreatedAt;
                 }
 
-                // Check if the message is from the logged-in user
                 var isMe = item.UserId == Convert.ToInt32(Session["UserId"]);
 
-                <div class="mb-2 d-flex @(isMe ? "justify-content-end" : "justify-content-start")">
-                    <div class="p-2 px-3 shadow-sm"
-                         style="max-width: 80%;
-                                border-radius: @(isMe ? "10px 10px 0 10px" : "10px 10px 10px 0");
-                                background-color: @(isMe ? "#dcf8c6" : "#ffffff");
-                                color: #303030;">
-
+                <div class="mb-3 d-flex @(isMe ? "justify-content-end" : "justify-content-start")">
+                    <div class="message-card @(isMe ? "me-style" : "other-style") shadow-sm">
                         @if (!isMe)
                         {
-                            <div class="fw-bold small mb-1" style="color: #075e54; font-size: 0.75rem;">@item.UserName (@item.Role)</div>
+                            <div class="fw-bold small mb-1 sender-name">@item.UserName</div>
                         }
-
-                        <div class="message-text" style="font-size: 0.95rem; line-height: 1.4;">@item.Message</div>
-
-                        <div class="d-flex align-items-center justify-content-end gap-1 mt-1 opacity-75" style="font-size: 0.65rem;">
-                            @item.CreatedAt.ToString("hh:mm tt")
+                        <div class="message-content">@item.Message</div>
+                        <div class="message-meta d-flex align-items-center @(isMe ? "justify-content-end" : "justify-content-start") mt-1">
+                            <span class="time">@item.CreatedAt.ToString("h:mm tt")</span>
                             @if (isMe)
                             {
-                                <i class="bi bi-check2-all text-primary ms-1"></i>
+                                <i class="bi bi-check2-all ms-1 text-primary"></i>
                             }
                         </div>
                     </div>
@@ -55,19 +49,81 @@
         }
     </div>
 
-    @* The input form is now visible to everyone *@
-    <div class="p-3 border-top bg-white">
-        @using (Html.BeginForm("PostComment", "Chat", FormMethod.Post, new { id = "commentForm" }))
+    <div class="p-3 bg-white border-top shadow-sm">
+        @using (Html.BeginForm("PostComment", "Chat", FormMethod.Post, new { id = "commentForm", @class = "m-0" }))
         {
             @Html.AntiForgeryToken()
             <input type="hidden" name="TargetId" value="@ViewBag.TargetId" />
             <input type="hidden" name="ChatType" value="@ViewBag.ChatType" />
-            <div class="input-group bg-light rounded-pill p-1">
-                <input type="text" name="Message" id="chatInput" class="form-control border-0 bg-transparent ps-3" placeholder="Type a message..." required autocomplete="off" />
-                <button type="submit" class="btn btn-primary rounded-circle p-2 ms-2" style="width: 40px; height: 40px;">
-                    <i class="bi bi-send-fill"></i>
+
+            <div class="d-flex align-items-center bg-light rounded-pill px-3 py-1 border shadow-sm transition-focus">
+                <input type="text" name="Message" id="chatInput"
+                       class="form-control border-0 bg-transparent flex-grow-1 py-2"
+                       placeholder="Message..."
+                       required autocomplete="off"
+                       style="box-shadow: none; font-size: 0.95rem;" />
+
+                <button type="submit" id="btnSend"
+                        class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                        style="width: 38px; height: 38px; transition: transform 0.2s;">
+                    <i class="bi bi-send-fill" style="font-size: 1.1rem; margin-left: 2px;"></i>
                 </button>
             </div>
         }
     </div>
 </div>
+
+<style>
+    /* SaaS Bubble Styles */
+    .message-card {
+        padding: 10px 16px;
+        max-width: 75%;
+        position: relative;
+        line-height: 1.5;
+        font-size: 0.92rem;
+    }
+
+    .me-style {
+        background: #6366F1; /* SaaS Indigo */
+        color: white;
+        border-radius: 18px 18px 2px 18px;
+    }
+
+    .other-style {
+        background: white;
+        color: #1E293B;
+        border: 1px solid #E2E8F0;
+        border-radius: 18px 18px 18px 2px;
+    }
+
+    .sender-name {
+        color: #6366F1;
+        font-size: 0.75rem;
+    }
+
+    .message-meta {
+        font-size: 0.68rem;
+        opacity: 0.7;
+    }
+
+    .me-style .message-meta {
+        color: rgba(255,255,255,0.8);
+    }
+
+    .me-style .text-primary {
+        color: #A5B4FC !important;
+    }
+    /* Lighter indigo for checks */
+
+    /* Input Focus Effect */
+    .transition-focus:focus-within {
+        border-color: #6366F1 !important;
+        background-color: white !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+    }
+
+    #btnSend:hover {
+        transform: scale(1.05);
+        background-color: #4F46E5;
+    }
+</style>

@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Project_Managent_System.Models;
 using Project_Managent_System.ViewModels;
 using System.Data.Entity;
+using Microsoft.AspNet.SignalR;
 
 namespace Project_Managent_System.Controllers
 {
@@ -12,34 +13,26 @@ namespace Project_Managent_System.Controllers
     {
         private readonly PMS_DatabaseEntities2 db = new PMS_DatabaseEntities2();
 
+        // ==========================================
+        // 🔹 GET THREAD
+        // ==========================================
+        // GET: Chat/GetThread
         [HttpGet]
         public ActionResult GetThread(int id, string type)
         {
             try
             {
-                if (Session["UserId"] == null)
-                    return Content("<div class='alert alert-warning py-2 small'>Session expired.</div>");
-
-                int currentUserId = Convert.ToInt32(Session["UserId"]);
-                string userRole = Session["Role"]?.ToString();
-
-                // Permission Check
-                if (!UserHasAccess(id, type, currentUserId, userRole))
-                {
-                    return Content("<div class='p-4 text-center text-muted small'>" +
-                                   "<i class='bi bi-shield-lock fs-2'></i><br>Access Denied.</div>");
-                }
-
                 var comments = db.Comments
                     .Where(c => (type == "Project" && c.ProjectId == id && c.TaskId == null) ||
                                 (type == "Task" && c.TaskId == id))
                     .OrderBy(c => c.CreatedAt)
-                    .Select(c => new CommentItem
+                    .ToList() // Fetch from DB first
+                    .Select(c => new Project_Managent_System.ViewModels.CommentItem
                     {
                         UserId = c.UserId,
                         UserName = c.Main_Users.FirstName,
                         Role = c.Main_Users.Role,
-                        Message = c.Message, // Fixed: Use DB spelling 'Messaage'
+                        Message = c.Message, // 💡 Maps DB 'Messaage' to ViewModel 'Message'
                         CreatedAt = c.CreatedAt
                     }).ToList();
 
@@ -50,81 +43,115 @@ namespace Project_Managent_System.Controllers
             }
             catch (Exception ex)
             {
-                return Content("Error: " + ex.Message);
+                return Content("<div class='alert alert-danger'>Error: " + ex.Message + "</div>");
             }
         }
 
+        // ==========================================
+        // 🔹 POST COMMENT
+        // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult PostComment(int TargetId, string Message, string ChatType)
         {
-            if (Session["UserId"] == null) return Content("Unauthorized");
+            if (Session["UserId"] == null)
+                return Json(new { success = false, message = "Unauthorized" });
 
-            int currentUserId = Convert.ToInt32(Session["UserId"]);
-            string userRole = Session["Role"]?.ToString();
-
-            if (!UserHasAccess(TargetId, ChatType, currentUserId, userRole))
-                return Content("Access Denied.");
-
-            var comment = new Comment
-            {
-                UserId = currentUserId,
-                Message = Message.Trim(), // Fixed: Use DB spelling 'Messaage'
-                CreatedAt = DateTime.Now
-            };
-
-            if (ChatType == "Project")
-            {
-                comment.ProjectId = TargetId;
-                // If TaskId is required (not nullable) in your DB, 
-                // you must either make it nullable or provide a valid Task ID.
-                comment.TaskId = null;
-            }
-            else
-            {
-                comment.TaskId = TargetId;
-                var task = db.Tasks.Find(TargetId);
-                if (task != null) comment.ProjectId = task.ProjectId;
-            }
+            if (string.IsNullOrWhiteSpace(Message))
+                return Json(new { success = false, message = "Message content is required." });
 
             try
             {
+                int currentUserId = Convert.ToInt32(Session["UserId"]);
+                string userRole = Session["Role"]?.ToString();
+                string userName = Session["UserName"]?.ToString() ?? "User"; // Ensure you have Name in Session
+
+                // 🔒 Security Verification
+                if (!UserHasAccess(TargetId, ChatType, currentUserId, userRole))
+                    return Json(new { success = false, message = "You do not have access to this thread." });
+
+                // 1. Prepare and Save to Database
+                var comment = new Comment
+                {
+                    UserId = currentUserId,
+                    Message = Message.Trim(),
+                    CreatedAt = DateTime.Now
+                };
+
+                if (ChatType == "Project")
+                {
+                    comment.ProjectId = TargetId;
+                    comment.TaskId = null;
+                }
+                else
+                {
+                    comment.TaskId = TargetId;
+                    var task = db.Tasks.Find(TargetId);
+                    if (task != null) comment.ProjectId = task.ProjectId;
+                }
+
                 db.Comments.Add(comment);
                 db.SaveChanges();
+
+                // 2. 🚀 BROADCAST VIA SIGNALR HUB
+                // Get the Hub Context
+                var hubContext = GlobalHost.ConnectionManager.GetHubContext<Project_Managent_System.Hubs.ChatHub>();
+
+                // Define a unique group name for this specific chat (e.g., "Project_15" or "Task_22")
+                string groupName = ChatType + "_" + TargetId;
+
+                // Send to everyone in the group
+                hubContext.Clients.Group(groupName).addNewMessageToPage(new
+                {
+                    UserId = currentUserId,
+                    UserName = userName,
+                    Role = userRole,
+                    Message = comment.Message,
+                    CreatedAt = comment.CreatedAt.ToString("hh:mm tt")
+                });
+
+                // 3. Return JSON Success (The client-side JS handles the rest)
+                return Json(new { success = true });
             }
             catch (Exception ex)
             {
-                // This will show you exactly why the database rejected the save
                 var inner = ex.InnerException?.InnerException?.Message ?? ex.Message;
-                return Content("<div class='alert alert-danger small'>DB Error: " + inner + "</div>");
+                return Json(new { success = false, message = "Database Error: " + inner });
             }
-
-            return GetThread(TargetId, ChatType);
         }
 
+        // ==========================================
+        // 🔐 ACCESS CONTROL LOGIC
+        // ==========================================
         private bool UserHasAccess(int id, string type, int userId, string role)
         {
-            if (role == "Admin" || role == "Manager") return true;
-
-            if (type == "Project")
+            try
             {
-                return db.ProjectUsers.Any(pu => pu.ProjectId == id && pu.UserId == userId);
+                if (role == "Admin" || role == "Manager") return true;
+
+                if (type == "Project")
+                {
+                    return db.ProjectUsers.Any(pu => pu.ProjectId == id && pu.UserId == userId);
+                }
+                else if (type == "Task")
+                {
+                    var task = db.Tasks.Include(t => t.Project.ProjectUsers)
+                                       .Include(t => t.Task_Assignments)
+                                       .FirstOrDefault(t => t.TaskId == id);
+
+                    if (task == null) return false;
+
+                    bool isAssigned = task.Task_Assignments.Any(ta => ta.UserId == userId);
+                    bool isProjectMember = task.Project.ProjectUsers.Any(pu => pu.UserId == userId);
+
+                    return isAssigned || isProjectMember;
+                }
+                return false;
             }
-            else if (type == "Task")
+            catch
             {
-                var task = db.Tasks.Include(t => t.Project.ProjectUsers)
-                                   .Include(t => t.Task_Assignments)
-                                   .FirstOrDefault(t => t.TaskId == id);
-
-                if (task == null) return false;
-
-                bool isTaskCreator = task.CreatedByManagerId == userId;
-                bool isAssigned = task.Task_Assignments.Any(ta => ta.UserId == userId);
-                bool isProjectMember = task.Project.ProjectUsers.Any(pu => pu.UserId == userId);
-
-                return isTaskCreator || isAssigned || isProjectMember;
+                return false;
             }
-            return false;
         }
     }
 }

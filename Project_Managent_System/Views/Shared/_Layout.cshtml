@@ -8,170 +8,68 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+
     <style>
-        /* --- THEME VARIABLES (Modern SaaS) --- */
+        /* --- THEME VARIABLES --- */
         :root {
-            --primary: #6366F1; /* Indigo */
-            --primary-dark: #4F46E5; /* Darker Indigo */
-            --primary-light: #EEF2FF; /* Very light Indigo */
-            --accent: #F43F5E; /* Coral */
-            --sidebar-bg: #1E1B4B; /* Deep Navy/Indigo Background */
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --primary-light: #EEF2FF;
+            --accent: #F43F5E;
+            --sidebar-bg: #1E1B4B;
             --sidebar-width: 260px;
             --collapsed-width: 70px;
-            --bg-body: #F3F4F6; /* Light Gray background for content */
+            --bg-body: #F3F4F6;
             --text-main: #1F2937;
         }
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .navbar-custom {
-            background-color: var(--sidebar-bg);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
+        html, body { height: 100%; margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); }
+        body { display: flex; flex-direction: column; }
+        .navbar-custom { background-color: var(--sidebar-bg); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 
         #sidebar {
             width: var(--sidebar-width);
             background-color: var(--sidebar-bg);
             color: #d1d5db;
             position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
+            top: 0; bottom: 0; left: 0;
             padding-top: 20px;
             transition: all 0.3s ease-in-out;
             z-index: 1030;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
         }
 
-            #sidebar.collapsed {
-                width: var(--collapsed-width);
-            }
-
-        .sidebar-header {
-            padding: 0 20px 30px 20px;
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .brand-text {
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 0.5px;
-            margin-left: 12px;
-            transition: opacity 0.3s;
-        }
-
-        #sidebar.collapsed .brand-text {
-            display: none;
-        }
-
-        .nav-list {
-            padding: 0 10px;
-            width: 100%;
-        }
-
-        #sidebar .nav-link {
-            color: #94a3b8;
-            padding: 12px 15px;
-            margin-bottom: 5px;
-            border-radius: 8px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-        }
-
-            #sidebar .nav-link:hover {
-                background-color: rgba(255, 255, 255, 0.1);
-                color: #fff;
-            }
-
-            #sidebar .nav-link.active {
-                background-color: var(--primary);
-                color: #fff;
-                box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-            }
-
-        #sidebar .link-text {
-            margin-left: 12px;
-            font-weight: 500;
-        }
-
-        #sidebar.collapsed .link-text {
-            display: none;
-        }
-
-        #sidebarToggle {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.25rem;
-            cursor: pointer;
-        }
-
-        .logout-link {
-            color: var(--accent) !important;
-            font-weight: 600;
-        }
-
-            .logout-link:hover {
-                background-color: rgba(244, 63, 94, 0.1) !important;
-            }
-
-        .page-wrapper {
-            flex: 1;
-            display: flex;
-        }
-
-        #content {
-            padding: 40px;
-            width: 100%;
-            transition: margin-left 0.3s ease-in-out;
-        }
+        #sidebar.collapsed { width: var(--collapsed-width); }
+        .sidebar-header { padding: 0 20px 30px 20px; display: flex; align-items: center; white-space: nowrap; overflow: hidden; }
+        .brand-text { font-weight: 700; color: #fff; margin-left: 12px; transition: opacity 0.3s; }
+        #sidebar.collapsed .brand-text { display: none; }
+        .nav-list { padding: 0 10px; width: 100%; list-style: none; }
+        #sidebar .nav-link { color: #94a3b8; padding: 12px 15px; margin-bottom: 5px; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; text-decoration: none; }
+        #sidebar .nav-link:hover { background-color: rgba(255, 255, 255, 0.1); color: #fff; }
+        #sidebar .nav-link.active { background-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4); }
+        #sidebar .link-text { margin-left: 12px; font-weight: 500; }
+        #sidebar.collapsed .link-text { display: none; }
+        #sidebarToggle { background: none; border: none; color: #fff; font-size: 1.25rem; cursor: pointer; }
+        .logout-link { color: var(--accent) !important; font-weight: 600; }
+        .page-wrapper { flex: 1; display: flex; }
+        #content { padding: 40px; width: 100%; transition: margin-left 0.3s ease-in-out; }
 
         @@media (min-width: 768px) {
-            #content.logged-in {
-                margin-left: var(--sidebar-width);
-            }
-
-            #sidebar.collapsed + .page-wrapper #content.logged-in {
-                margin-left: var(--collapsed-width);
-            }
+            #content.logged-in { margin-left: var(--sidebar-width); }
+            #sidebar.collapsed + .page-wrapper #content.logged-in { margin-left: var(--collapsed-width); }
         }
 
-        footer {
-            background-color: #fff;
-            color: #6b7280;
-            text-align: center;
-            padding: 15px 0;
-            border-top: 1px solid #e5e7eb;
-            font-size: 0.9rem;
-            z-index: 1040;
-        }
+        footer { background-color: #fff; color: #6b7280; text-align: center; padding: 15px 0; border-top: 1px solid #e5e7eb; font-size: 0.9rem; z-index: 1040; }
 
-        /* --- UPDATED COMMENT DRAWER UI --- */
+        /* --- COMMENT DRAWER --- */
         #commentDrawer {
             position: fixed;
-            top: 0;
-            right: -450px;
-            width: 450px;
-            height: 100vh;
+            top: 0; right: -450px;
+            width: 450px; height: 100vh;
             background-color: white;
             box-shadow: -5px 0 25px rgba(0,0,0,0.15);
             transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -179,43 +77,11 @@
             display: flex;
             flex-direction: column;
         }
-
-            #commentDrawer.open {
-                right: 0;
-            }
-
-        .drawer-header {
-            padding: 24px;
-            background-color: var(--sidebar-bg);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .drawer-body {
-            flex: 1;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            background-color: #f8fafc;
-        }
-
-        .drawer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(2px);
-            display: none;
-            z-index: 1999;
-        }
-
-            .drawer-overlay.active {
-                display: block;
-            }
+        #commentDrawer.open { right: 0; }
+        .drawer-header { padding: 24px; background-color: var(--sidebar-bg); color: white; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; background-color: #f8fafc; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(2px); display: none; z-index: 1999; }
+        .drawer-overlay.active { display: block; }
     </style>
 </head>
 
@@ -243,10 +109,7 @@
         <div class="page-wrapper" style="margin-top: 70px;">
             <div id="content">@RenderBody()</div>
         </div>
-
-        <footer>
-            &copy; @DateTime.Now.Year - TaskZIP | Managed Project System
-        </footer>
+        <footer> &copy; @DateTime.Now.Year - TaskZIP | Managed Project System </footer>
     }
     else
     {
@@ -259,6 +122,7 @@
                 @if (Session["Role"]?.ToString() == "Manager")
                 {
                     <li class="nav-item"><a href="@Url.Action("ManagerDashboard", "Manager")" class="nav-link active"><i class="bi bi-speedometer2 fs-5"></i> <span class="link-text">Dashboard</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("Calendar", "Calender")" class="nav-link"><i class="bi bi-calendar3 fs-5"></i> <span class="link-text">Timeline Calendar</span></a></li>
                     <li class="nav-item"><a href="@Url.Action("CreateProject", "Manager")" class="nav-link"><i class="bi bi-folder-plus fs-5"></i> <span class="link-text">Create Project</span></a></li>
                     <li class="nav-item"><a href="@Url.Action("CreateTask", "Tasks")" class="nav-link"><i class="bi bi-pencil-square fs-5"></i> <span class="link-text">Create Task</span></a></li>
                     <li class="nav-item"><a href="@Url.Action("AssignTask", "Tasks")" class="nav-link"><i class="bi bi-person-plus fs-5"></i> <span class="link-text">Assign Task</span></a></li>
@@ -269,13 +133,15 @@
                 else if (Session["Role"]?.ToString() == "Admin")
                 {
                     <li class="nav-item"><a href="@Url.Action("AdminDashboard", "Admin")" class="nav-link active"><i class="bi bi-speedometer2 fs-5"></i> <span class="link-text">Dashboard</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("Calendar", "Calender")" class="nav-link"><i class="bi bi-calendar3 fs-5"></i> <span class="link-text">Global Calendar</span></a></li>
                     <li class="nav-item"><a href="@Url.Action("ManageUsers", "Admin")" class="nav-link"><i class="bi bi-person-plus fs-5"></i> <span class="link-text">Manage Users</span></a></li>
                     <li class="nav-item"><a href="@Url.Action("ManageProjects", "Admin")" class="nav-link"><i class="bi bi-folder-plus fs-5"></i> <span class="link-text">Manage Projects</span></a></li>
-                    <li class="nav-item"><a href="@Url.Action("ManageTasks", "Admin")" class="nav-link"><i class="bi bi-pencil-square fs-5"></i> <span class="link-text">Manage Task</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("ManageTasks", "Admin")" class="nav-link"><i class="bi bi-pencil-square fs-5"></i> <span class="link-text">Manage Tasks</span></a></li>
                 }
                 else if (Session["Role"]?.ToString() == "User")
                 {
                     <li class="nav-item"><a href="@Url.Action("UserDashboard", "User")" class="nav-link active"><i class="bi bi-speedometer2 fs-5"></i> <span class="link-text">Dashboard</span></a></li>
+                    <li class="nav-item"><a href="@Url.Action("Calendar", "Calender")" class="nav-link"><i class="bi bi-calendar-event fs-5"></i> <span class="link-text">My Schedule</span></a></li>
                     <li class="nav-item"><a href="@Url.Action("MyTasks", "User")" class="nav-link"><i class="bi bi-folder-plus fs-5"></i> <span class="link-text">My Assignments</span></a></li>
                     <li class="nav-item"><a href="@Url.Action("UserTaskReport", "User")" class="nav-link"><i class="bi bi-person-plus fs-5"></i> <span class="link-text">Task Report</span></a></li>
                     <li class="nav-item"><a href="@Url.Action("MyProjects", "User")" class="nav-link"><i class="bi bi-pencil-square fs-5"></i> <span class="link-text">My Projects</span></a></li>
@@ -298,7 +164,7 @@
         <div id="commentDrawer">
             <div class="drawer-header">
                 <h5 class="mb-0 fw-bold"><i class="bi bi-chat-dots me-2"></i> Discussion</h5>
-                <button class="btn-close btn-close-white" onclick="closeComments()"></button>
+                <button type="button" class="btn-close btn-close-white" onclick="closeComments()"></button>
             </div>
             <div class="drawer-body" id="drawerBody">
                 <div class="text-center mt-5">
@@ -310,66 +176,104 @@
     }
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
+    <script src="~/signalr/hubs"></script>
 
     <script>
-        $('#sidebarToggle').click(function () {
-            $('#sidebar').toggleClass('collapsed');
-            $('body').toggleClass('sidebar-is-collapsed');
-        });
+        // Initialize Google Charts
+        google.charts.load('current', { 'packages': ['gantt'] });
 
-        function openComments(id, type) {
-            $('#commentDrawer').addClass('open');
-            $('#drawerOverlay').addClass('active');
-
-            var headerTitle = (type === 'Project') ? 'Project Chat' : 'Task Chat';
-            $('#commentDrawer .drawer-header h5').html('<i class="bi bi-chat-dots-fill me-2"></i>' + headerTitle);
-            $('#drawerBody').html('<div class="d-flex flex-column align-items-center justify-content-center h-100"><div class="spinner-border text-primary mb-3"></div><p class="text-muted">Loading conversation...</p></div>');
-
-            $.ajax({
-                url: '/Chat/GetThread',
-                type: 'GET',
-                data: { id: id, type: type },
-                cache: false,
-                success: function (data) {
-                    $('#drawerBody').html(data);
-                    scrollToBottom();
-                },
-                error: function (xhr) {
-                    $('#drawerBody').html('<div class="p-4 text-center text-danger"><i class="bi bi-exclamation-circle fs-1"></i><p class="mt-2">Error loading chat.</p></div>');
-                }
-            });
-        }
-
-        $(document).on('submit', '#commentForm', function (e) {
-            e.preventDefault();
-            var form = $(this);
-            $.ajax({
-                url: form.attr('action'),
-                type: 'POST',
-                data: form.serialize(),
-                success: function (response) {
-                    $('#drawerBody').html(response);
-                    $('#chatInput').val('');
-                    scrollToBottom();
-                }
-            });
-        });
-
-        function scrollToBottom() {
-            var chatDiv = document.getElementById('chatMessages');
-            if (chatDiv) chatDiv.scrollTop = chatDiv.scrollHeight;
-        }
-
+        // GLOBAL UI FUNCTIONS
         function closeComments() {
             $('#commentDrawer').removeClass('open');
             $('#drawerOverlay').removeClass('active');
         }
 
-        $('#drawerOverlay').click(closeComments);
+        function scrollToBottom() {
+            var chatDiv = document.getElementById('chatMessages');
+            if (chatDiv) {
+                $(chatDiv).animate({ scrollTop: chatDiv.scrollHeight }, 300);
+            }
+        }
+
+        $(function () {
+            var chat = $.connection.chatHub;
+            var currentUserId = '@Session["UserId"]';
+
+            if (chat) {
+                chat.client.addNewMessageToPage = function (data) {
+                    var isMe = data.UserId == currentUserId;
+                    var html = `
+                        <div class="mb-3 d-flex ${isMe ? 'justify-content-end' : 'justify-content-start'}">
+                            <div class="message-card ${isMe ? 'me-style' : 'other-style'} shadow-sm">
+                                ${!isMe ? `<div class="fw-bold small mb-1 sender-name">${data.UserName}</div>` : ''}
+                                <div class="message-content">${data.Message}</div>
+                                <div class="message-meta d-flex align-items-center ${isMe ? 'justify-content-end' : 'justify-content-start'} mt-1">
+                                    <span class="time">${data.CreatedAt}</span>
+                                    ${isMe ? '<i class="bi bi-check2-all ms-1 text-primary"></i>' : ''}
+                                </div>
+                            </div>
+                        </div>`;
+
+                    $('#chatMessages').append(html);
+                    $('#noMessagesNotice').remove();
+                    scrollToBottom();
+                };
+
+                $.connection.hub.start().done(function() {
+                    console.log("SignalR Connection Established.");
+                });
+            }
+
+            window.openComments = function(id, type) {
+                $('#commentDrawer').addClass('open');
+                $('#drawerOverlay').addClass('active');
+                $('#drawerBody').html('<div class="text-center p-5"><div class="spinner-border text-primary"></div></div>');
+
+                if (chat) chat.server.joinGroup(type + "_" + id);
+
+                $.get('/Chat/GetThread', { id: id, type: type }, function (data) {
+                    $('#drawerBody').html(data);
+                    scrollToBottom();
+                });
+            };
+        });
+
+        $(document).ready(function() {
+            $('#sidebarToggle').on('click', function () {
+                $('#sidebar').toggleClass('collapsed');
+            });
+
+            $('#drawerOverlay').on('click', closeComments);
+
+            $(document).on('submit', '#commentForm', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var btn = $('#btnSend');
+                var input = $('#chatInput');
+                if (!input.val().trim()) return;
+                btn.prop('disabled', true);
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: form.serialize(),
+                    success: function (res) {
+                        if (res.success) { input.val('').focus(); }
+                        else { alert("Error: " + res.message); }
+                    },
+                    error: function () { alert("Could not send message."); },
+                    complete: function() { btn.prop('disabled', false); }
+                });
+            });
+        });
     </script>
 
     @RenderSection("Scripts", required: false)

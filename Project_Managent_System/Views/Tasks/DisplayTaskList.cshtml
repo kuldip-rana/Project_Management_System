@@ -195,7 +195,8 @@
                             </td>
                             <td class="text-end">
                                 <div class="d-flex justify-content-end gap-1">
-                                    <button type="button" class="btn btn-action" title="Task Chat" onclick="openComments(@item.TaskId)">
+                                    <button type="button" class="btn btn-action" title="Task Chat"
+                                            onclick="openComments(@item.TaskId, 'Task')">
                                         <i class="bi bi-chat-text"></i>
                                     </button>
                                     <a href="@Url.Action("EditTask", "Tasks", new { id = item.TaskId })" class="btn btn-action" title="Edit">

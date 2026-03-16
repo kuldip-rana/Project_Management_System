@@ -166,64 +166,61 @@
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 <script>
     let activeTaskId = 0;
 
-    function loadComments(taskId) {
-        activeTaskId = taskId;
-        const container = $('#commentsContainer');
+   function loadComments(taskId) {
+    const container = $('#commentsContainer');
 
-        // Show Loading
-        container.html('<div class="text-center py-5"><div class="spinner-border text-indigo"></div><p class="text-muted small mt-2">Loading messages...</p></div>');
+    // Show a loading spinner so it's not just white
+    container.html('<div class="text-center p-5"><div class="spinner-border text-primary"></div></div>');
 
-        $.ajax({
-            url: '@Url.Action("GetTaskComments", "User")',
-            type: 'GET',
-            data: { id: taskId },
-            success: function (data) {
-                container.html(data);
+    $.ajax({
+        // 💡 CRITICAL: Point to Chat Controller and provide the 'type'
+        url: '/Chat/GetThread',
+        type: 'GET',
+        data: { id: taskId, type: 'Task' },
+        success: function (data) {
+            container.html(data);
+            bindPartialViewForm(); // Re-bind the Send button
 
-                // 1. Re-bind the form inside the newly loaded HTML
-                bindPartialViewForm();
-
-                // 2. Scroll to bottom
-                const chatDiv = document.getElementById('chatMessages');
-                if (chatDiv) {
-                    chatDiv.scrollTop = chatDiv.scrollHeight;
-                }
-            },
-            error: function (xhr) {
-                container.html('<div class="alert alert-danger m-3">Error ' + xhr.status + ': Could not load discussion.</div>');
-            }
-        });
-    }
+            // Scroll to bottom
+            const chatDiv = document.getElementById('chatMessages');
+            if (chatDiv) chatDiv.scrollTop = chatDiv.scrollHeight;
+        },
+        error: function (xhr) {
+            container.html('<div class="alert alert-danger m-3">Could not load chat. Status: ' + xhr.status + '</div>');
+        }
+    });
+}
 
     function bindPartialViewForm() {
-        // Find the form that was just loaded via AJAX
+        // Find the form inside the dynamic HTML and intercept it
         $('#commentForm').off('submit').on('submit', function (e) {
             e.preventDefault();
-            const form = $(this);
-            const btn = form.find('button');
-
-            btn.prop('disabled', true); // Prevent double-clicks
+            var form = $(this);
 
             $.ajax({
                 url: form.attr('action'),
                 type: 'POST',
                 data: form.serialize(),
-                success: function (response) {
-                    if (response.success) {
-                        loadComments(activeTaskId); // Reload the list
-                    } else {
-                        alert(response.message);
-                        btn.prop('disabled', false);
-                    }
-                },
-                error: function () {
-                    alert("Network error while sending message.");
-                    btn.prop('disabled', false);
+                success: function (htmlResponse) {
+                    // Refresh the container with the updated thread
+                    $('#commentsContainer').html(htmlResponse);
+                    $('#chatInput').val('');
+                    bindPartialViewForm(); // Re-bind for the next message
+                    scrollToBottom();
                 }
             });
         });
+    }
+
+    function scrollToBottom() {
+        const chatDiv = document.getElementById('chatMessages');
+        if (chatDiv) {
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        }
     }
 </script>

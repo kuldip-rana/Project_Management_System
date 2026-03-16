@@ -1,0 +1,215 @@
+﻿@{
+    ViewBag.Title = "Organization Timeline";
+}
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --saas-primary: #6366f1;
+        --saas-primary-soft: #eef2ff;
+        --saas-bg: #f8fafc;
+        --saas-card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--saas-bg);
+        color: var(--text-dark);
+    }
+
+    /* Page Header */
+    .page-header {
+        padding: 2rem 0;
+        background: linear-gradient(to right, #ffffff, var(--saas-bg));
+        border-bottom: 1px solid #e2e8f0;
+        margin-bottom: 2.5rem;
+    }
+
+    /* Sidebar Styling */
+    .glass-sidebar {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        padding: 1.5rem;
+        position: sticky;
+        top: 2rem;
+    }
+
+    /* Calendar Container */
+    .calendar-card {
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        box-shadow: var(--saas-card-shadow);
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    /* Legend Items */
+    .legend-pill {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        background: #fff;
+        margin-bottom: 0.75rem;
+        border: 1px solid #f1f5f9;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: transform 0.2s;
+    }
+
+        .legend-pill:hover {
+            transform: translateX(5px);
+        }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 12px;
+    }
+
+    /* FullCalendar Overrides */
+    .fc {
+        border: none !important;
+    }
+
+    .fc-toolbar-title {
+        font-size: 1.5rem !important;
+        font-weight: 700 !important;
+        color: var(--text-dark);
+    }
+
+    .fc-button {
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        border: 1px solid #e2e8f0 !important;
+        background: white !important;
+        color: var(--text-muted) !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+        transition: all 0.2s !important;
+    }
+
+    .fc-button-primary:not(:disabled).fc-button-active,
+    .fc-button-primary:not(:disabled):active {
+        background: var(--saas-primary) !important;
+        color: white !important;
+        border-color: var(--saas-primary) !important;
+    }
+
+    .fc-daygrid-day-number {
+        font-weight: 500;
+        color: var(--text-muted);
+        padding: 8px !important;
+    }
+
+    .fc-col-header-cell {
+        padding: 12px 0 !important;
+        background: #f1f5f9;
+        border-radius: 8px;
+    }
+
+    /* Event Styling */
+    .fc-event {
+        border-radius: 6px !important;
+        padding: 4px 8px !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        border: none !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+</style>
+
+<div class="page-header">
+    <div class="container-fluid px-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fw-bold mb-1" style="letter-spacing: -1px;">Organizational Timeline</h1>
+                <p class="text-muted mb-0"><i class="bi bi-calendar3 me-2"></i> Real-time synchronization of projects and task velocities.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary btn-sm rounded-3 px-3"><i class="bi bi-download me-2"></i>Export</button>
+                <button class="btn btn-primary btn-sm rounded-3 px-3" style="background: var(--saas-primary); border:none;"><i class="bi bi-plus-lg me-2"></i>New Event</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-5 pb-5">
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <div class="glass-sidebar">
+                <h6 class="fw-bold text-uppercase small text-muted mb-4" style="letter-spacing: 1px;">Categories</h6>
+
+                <div class="legend-pill">
+                    <span class="dot" style="background: #1e1b4b; box-shadow: 0 0 8px rgba(30,27,75,0.4);"></span>
+                    <span>Projects</span>
+                </div>
+                <div class="legend-pill">
+                    <span class="dot" style="background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.4);"></span>
+                    <span>Urgent Tasks</span>
+                </div>
+                <div class="legend-pill">
+                    <span class="dot" style="background: #3b82f6; box-shadow: 0 0 8px rgba(59,130,246,0.4);"></span>
+                    <span>Routine Tasks</span>
+                </div>
+
+                <div class="mt-5 p-4 rounded-4" style="background: var(--saas-primary-soft);">
+                    <h6 class="fw-bold mb-2" style="color: var(--saas-primary);">Pro Tip</h6>
+                    <p class="small mb-0" style="color: #4338ca; line-height: 1.6;">Switch to <strong>List View</strong> for a detailed agenda of the current month's deadlines.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="calendar-card">
+                <div id='calendar'></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: '750px',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,listMonth'
+                },
+                dayMaxEvents: true, // +more link when too many events
+                events: '@Url.Action("GetEvents", "Calender")',
+
+                eventMouseEnter: function(info) {
+                    info.el.style.transition = "all 0.2s ease";
+                    info.el.style.filter = "brightness(1.1)";
+                    info.el.style.zIndex = "10";
+                },
+                eventMouseLeave: function(info) {
+                    info.el.style.filter = "brightness(1)";
+                },
+                eventClick: function(info) {
+                    if (info.event.url) {
+                        window.location.href = info.event.url;
+                        info.jsEvent.preventDefault();
+                    }
+                }
+            });
+            calendar.render();
+        });
+    </script>
+}
