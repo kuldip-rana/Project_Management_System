@@ -9,7 +9,7 @@
     /* Scope styles to this view to ensure theme consistency */
     :root {
         --primary: #6366F1; /* Indigo */
-        --accent: #F43F5E;  /* Coral */
+        --accent: #F43F5E; /* Coral */
     }
 
     .login-card {
@@ -49,19 +49,19 @@
         padding-bottom: 0.75rem;
     }
 
-    /* Focus State - The "Glow" */
-    .form-control:focus {
-        background-color: #fff;
-        box-shadow: none;
-        border-color: var(--primary);
-    }
+        /* Focus State - The "Glow" */
+        .form-control:focus {
+            background-color: #fff;
+            box-shadow: none;
+            border-color: var(--primary);
+        }
 
-    .form-control:focus + .input-group-text,
-    .input-group:focus-within .input-group-text {
-        border-color: var(--primary);
-        background-color: #fff;
-        color: var(--primary);
-    }
+            .form-control:focus + .input-group-text,
+            .input-group:focus-within .input-group-text {
+                border-color: var(--primary);
+                background-color: #fff;
+                color: var(--primary);
+            }
 
     .btn-brand {
         background-color: var(--primary);
@@ -72,21 +72,22 @@
         transition: all 0.2s;
     }
 
-    .btn-brand:hover {
-        background-color: #4F46E5; /* Darker Indigo */
-        transform: translateY(-1px);
-        box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
-    }
+        .btn-brand:hover {
+            background-color: #4F46E5; /* Darker Indigo */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+        }
 
     .link-accent {
         color: var(--accent);
         text-decoration: none;
         font-weight: 600;
     }
-    .link-accent:hover {
-        color: #E11D48; /* Darker Coral */
-        text-decoration: underline;
-    }
+
+        .link-accent:hover {
+            color: #E11D48; /* Darker Coral */
+            text-decoration: underline;
+        }
 
     /* Simple Fade In Animation */
     .fade-in-up {
@@ -176,4 +177,13 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            // Target the email input by its ID (usually 'Email' based on your Model)
+            $('#Email').on('input', function () {
+                this.value = this.value.toLowerCase();
+            });
+        });
+    </script>
 }

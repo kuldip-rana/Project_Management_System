@@ -681,6 +681,8 @@
     <Content Include="Views\Admin\EditUsers.cshtml" />
     <Content Include="Views\Manager\DeleteProject.cshtml" />
     <Content Include="Views\Calender\Calendar.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

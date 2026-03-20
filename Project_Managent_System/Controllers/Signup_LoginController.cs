@@ -63,44 +63,45 @@ namespace Project_Managent_System.Controllers
         {
             return View();
         }
-
-        // POST METHOD SIGNUP
+        // POST SignUp Page
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult SignUp(Main_Users u)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                // 1. Check if the email already exists in the database
+                var emailExists = db.Main_Users.Any(x => x.Email.ToLower() == u.Email.ToLower());
+
+                if (emailExists)
+                {
+                    // Add a specific error to the Email field
+                    ModelState.AddModelError("Email", "This email address is already registered.");
+                    ViewBag.InsertMessage = "<script>alert('Email already exists. Please use a different one.')</script>";
+                    return View(u);
+                }
+
+                try
                 {
                     db.Main_Users.Add(u);
                     int a = db.SaveChanges();
 
                     if (a > 0)
                     {
-                        ViewBag.InsertMessage = "<script>alert('Registered Successfully')</script>";
-                        ModelState.Clear(); // Clear the form after successful registration
-                    }
-                    else
-                    {
-                        ViewBag.InsertMessage = "<script>alert('Registration Failed')</script>";
+                        ViewBag.InsertMessage = "<script>alert('Registered Successfully!')</script>";
+                        ModelState.Clear();
+                        // Optional: Redirect to login after a second
+                        // return RedirectToAction("Login"); 
+                        return View();
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                // Common error: Duplicate Email
-                if (ex.InnerException != null && ex.InnerException.InnerException != null &&
-                    ex.InnerException.InnerException.Message.Contains("Unique Constraint"))
+                catch (Exception ex)
                 {
-                    ViewBag.InsertMessage = "<script>alert('Email already exists.')</script>";
-                }
-                else
-                {
-                    ViewBag.InsertMessage = "<script>alert('An error occurred during registration.')</script>";
+                    ViewBag.InsertMessage = "<script>alert('An unexpected error occurred.')</script>";
                 }
             }
 
-            return View();
+            return View(u);
         }
 
         // ===============================

@@ -1,0 +1,147 @@
+﻿@{
+    ViewBag.Title = "About TaskZIP";
+}
+
+<style>
+    :root {
+        --primary: #6366F1;
+        --primary-soft: #EEF2FF;
+        --accent: #F43F5E;
+        --dark: #0F172A;
+    }
+
+    /* Hero Section with Mesh Gradient */
+    .hero-section {
+        background-color: #ffffff;
+        background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+        padding: 120px 0 80px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Modern Glassmorphism Card */
+    .stat-card {
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.15);
+            background: #fff;
+        }
+
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        transition: 0.3s;
+    }
+
+    .stat-card:hover .icon-box {
+        background: var(--primary);
+        color: white;
+        transform: rotate(-5deg) scale(1.1);
+    }
+
+    .section-label {
+        letter-spacing: 0.1em;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-transform: uppercase;
+    }
+</style>
+
+<section class="hero-section">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <span class="section-label mb-3 d-block">The Future of Productivity</span>
+                <h1 class="display-3 fw-extrabold text-dark mb-4" style="letter-spacing: -1px;">
+                    We help teams <span class="text-primary">move faster</span>
+                </h1>
+                <p class="lead text-muted mb-5 px-md-5">
+                    TaskZIP wasn't born in a boardroom; it was born from the frustration of messy spreadsheets and lost emails. We built the tool we always wanted to use.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <button class="btn btn-primary btn-lg rounded-pill px-4 shadow">Join the Journey</button>
+                    <button class="btn btn-outline-dark btn-lg rounded-pill px-4">Our Story</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container py-5" style="margin-top: -50px;">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card stat-card p-4 h-100">
+                <div class="icon-box"><i class="bi bi-cpu-fill"></i></div>
+                <h4 class="fw-bold text-dark">High Velocity</h4>
+                <p class="text-muted mb-0">Engineered for speed. Our infrastructure ensures your project updates sync in milliseconds, not minutes.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card p-4 h-100 border-primary" style="border-width: 2px !important;">
+                <div class="icon-box"><i class="bi bi-patch-check-fill"></i></div>
+                <h4 class="fw-bold text-dark">Enterprise Grade</h4>
+                <p class="text-muted mb-0">SOC2 compliant and encrypted at rest. We provide the security big tech demands with the agility startups love.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card p-4 h-100">
+                <div class="icon-box"><i class="bi bi-incognito"></i></div>
+                <h4 class="fw-bold text-dark">Human Centric</h4>
+                <p class="text-muted mb-0">We focus on the "UX of Work." Minimalist interfaces that reduce cognitive load and prevent burnout.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="container py-5 my-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <h2 class="fw-bold text-dark mb-4">Why TaskZIP exists</h2>
+            <div class="d-flex mb-3">
+                <i class="bi bi-check-circle-fill text-primary me-3 fs-5"></i>
+                <p class="text-muted">Eliminate 30% of weekly "status update" meetings.</p>
+            </div>
+            <div class="d-flex mb-3">
+                <i class="bi bi-check-circle-fill text-primary me-3 fs-5"></i>
+                <p class="text-muted">Centralize documentation and tasking in one source of truth.</p>
+            </div>
+            <div class="d-flex">
+                <i class="bi bi-check-circle-fill text-primary me-3 fs-5"></i>
+                <p class="text-muted">Visual resource planning that prevents team over-allocation.</p>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="p-5 bg-primary rounded-5 text-white shadow-lg">
+                <h3 class="fw-bold mb-3">By the numbers</h3>
+                <div class="row g-4 mt-2">
+                    <div class="col-6">
+                        <div class="display-6 fw-bold">99.9%</div>
+                        <div class="small opacity-75">Uptime</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="display-6 fw-bold">2M+</div>
+                        <div class="small opacity-75">Tasks Completed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -39,7 +39,8 @@
                     <h5 class="m-0 fw-bold text-slate-900">Discussion & Activity</h5>
                 </div>
                 <div class="bg-slate-50" id="commentsContainer" style="min-height: 300px;">
-                    @Html.Action("GetTaskComments", new { id = Model.TaskId })
+                    @* CRITICAL FIX: Calling Chat Controller instead of User Controller *@
+                    @Html.Action("GetThread", "Chat", new { id = Model.TaskId, type = "Task" })
                 </div>
             </div>
         </div>
@@ -76,6 +77,7 @@
                 </div>
 
                 <div class="d-grid gap-2">
+                    @Html.AntiForgeryToken() @* Added for AJAX security *@
                     <label class="text-muted small text-uppercase fw-bold mt-2">Update Progress</label>
                     <select id="statusDropdown" class="form-select border-0 bg-slate-50 rounded-3 mb-2">
                         <option value="Pending" @(Model.TaskStatus == "Pending" ? "selected" : "")>Pending</option>
@@ -84,7 +86,7 @@
                     </select>
 
                     <button class="btn btn-indigo py-2 rounded-3" onclick="syncStatusAndComment(@Model.TaskId, @Model.Id)">
-                        <i class="bi bi-send-check me-2"></i> Update & Notify
+                        <i class="bi bi-send-check me-2"></i> Update Status
                     </button>
                 </div>
             </div>
@@ -110,6 +112,7 @@
         background: #4F46E5;
         color: white;
         border: none;
+        transition: 0.2s;
     }
 
         .btn-indigo:hover {
@@ -134,58 +137,76 @@
     }
 </style>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    function syncStatusAndComment(taskId, assignmentId) {
-        const newStatus = $('#statusDropdown').val();
+@section Scripts {
+    <script>
+        // 1. Update Status logic
+        function syncStatusAndComment(taskId, assignmentId) {
+            const newStatus = $('#statusDropdown').val();
+            const token = $('input[name="__RequestVerificationToken"]').val();
 
-        // 1. Update the Status
-        $.ajax({
-            url: '@Url.Action("UpdateTaskStatus", "User")',
-            type: 'POST',
-            data: {
-                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
-                assignmentId: assignmentId,
-                newStatus: newStatus
-            },
-            success: function(response) {
-                // 2. Load/Refresh the chat area so user can add a reason/comment
-                loadComments(taskId);
-
-                // Optional: Scroll to chat
-                document.getElementById('commentsContainer').scrollIntoView({ behavior: 'smooth' });
-            }
-        });
-    }
-
-    function loadComments(taskId) {
-        const container = $('#commentsContainer');
-        container.html('<div class="text-center py-5"><div class="spinner-border text-indigo"></div></div>');
-
-        $.ajax({
-            url: '@Url.Action("GetTaskComments", "User")',
-            type: 'GET',
-            data: { id: taskId },
-            success: function (data) {
-                container.html(data);
-                bindPartialViewForm(); // Re-bind the Post button in the loaded partial
-            }
-        });
-    }
-
-    // Helper to handle the "Send" button inside the comment thread
-    function bindPartialViewForm() {
-        $('#commentForm').off('submit').on('submit', function (e) {
-            e.preventDefault();
-            const form = $(this);
             $.ajax({
-                url: form.attr('action'),
+                url: '@Url.Action("UpdateTaskStatus", "User")',
                 type: 'POST',
-                data: form.serialize(),
-                success: function (res) {
-                    if (res.success) loadComments(@Model.TaskId);
+                data: {
+                    __RequestVerificationToken: token,
+                    assignmentId: assignmentId,
+                    newStatus: newStatus
+                },
+                success: function() {
+                    // Success feedback
+                    loadComments(taskId);
+                    alert("Status updated to " + newStatus);
+                },
+                error: function() {
+                    alert("Error updating status. Please try again.");
                 }
             });
+        }
+
+        // 2. Load Comments from ChatController
+        function loadComments(taskId) {
+            const container = $('#commentsContainer');
+            container.html('<div class="text-center py-5"><div class="spinner-border text-indigo" role="status"></div></div>');
+
+            $.ajax({
+                url: '@Url.Action("GetThread", "Chat")',
+                type: 'GET',
+                data: { id: taskId, type: 'Task' },
+                success: function (data) {
+                    container.html(data);
+                    bindChatForm(); // Re-attach the submit handler to the newly loaded form
+                }
+            });
+        }
+
+        // 3. Handle Comment Submission
+        function bindChatForm() {
+            // Find the form inside the loaded partial view
+            const form = $('#commentForm');
+
+            form.off('submit').on('submit', function (e) {
+                e.preventDefault();
+
+                // Add ChatType manually since it's required by your PostComment action
+                let formData = $(this).serialize() + "&ChatType=Task";
+
+                $.ajax({
+                    url: '@Url.Action("PostComment", "Chat")',
+                    type: 'POST',
+                    data: formData,
+                    success: function (res) {
+                        if (res.success) {
+                            loadComments(@Model.TaskId);
+                        } else {
+                            alert(res.message || "Failed to post message.");
+                        }
+                    }
+                });
+            });
+        }
+
+        $(document).ready(function () {
+            bindChatForm(); // Initialize on page load
         });
-    }
-</script>
+    </script>
+}

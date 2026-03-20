@@ -1,231 +1,215 @@
 ﻿@model Project_Managent_System.Models.Main_Users
 
 @{
-    ViewBag.Title = "Sign Up";
+    ViewBag.Title = "Create Account";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <style>
-    /* Scope styles to match the Login Theme */
     :root {
-        --primary: #6366F1; /* Indigo */
-        --accent: #F43F5E; /* Coral */
-        --bg-light: #F9FAFB;
+        --primary: #6366F1;
+        --primary-hover: #4F46E5;
+        --bg-soft: #F8FAFC;
+        --border-color: #E2E8F0;
+    }
+
+    body {
+        background-color: #F1F5F9;
     }
 
     .signup-card {
         border: none;
-        border-radius: 1rem;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        border-radius: 1.25rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        background: #fff;
     }
 
-    /* Icon Circle */
-    .brand-icon-circle {
-        width: 60px;
-        height: 60px;
-        background-color: #EEF2FF; /* Light Indigo */
+    .brand-icon {
+        width: 55px;
+        height: 55px;
+        background: #EEF2FF;
         color: var(--primary);
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
-        margin: 0 auto 1.5rem auto;
-        font-size: 1.75rem;
+        border-radius: 12px;
+        margin: 0 auto 1rem;
+        font-size: 1.5rem;
     }
 
-    /* Input Groups */
+    .form-label {
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+        color: #64748B;
+    }
+
     .input-group-text {
-        background-color: #F9FAFB;
-        border: 1px solid #E5E7EB;
+        background-color: var(--bg-soft);
+        border: 1px solid var(--border-color);
         border-right: none;
-        color: #9CA3AF;
+        color: #94A3B8;
+        padding-left: 1rem;
     }
 
     .form-control, .form-select {
-        background-color: #F9FAFB;
-        border: 1px solid #E5E7EB;
-        padding: 0.75rem;
+        background-color: var(--bg-soft);
+        border: 1px solid var(--border-color);
+        padding: 0.75rem 1rem;
         font-size: 0.95rem;
     }
 
-    /* Fix borders for input groups vs standalone selects */
-    .input-group .form-control {
-        border-left: none;
-    }
-
-    /* Focus States */
-    .form-control:focus, .form-select:focus {
-        background-color: #fff;
-        box-shadow: none;
-        border-color: var(--primary);
-    }
-
-        .form-control:focus + .input-group-text,
-        .input-group:focus-within .input-group-text {
-            border-color: var(--primary);
+        .form-control:focus, .form-select:focus {
             background-color: #fff;
-            color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
-    .btn-brand {
-        background-color: var(--primary);
-        border-color: var(--primary);
-        color: white;
-        padding: 0.75rem;
-        font-weight: 600;
-        transition: all 0.2s;
+    /* Success/Error Message Styling */
+    .status-msg {
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        border: none;
     }
-
-        .btn-brand:hover {
-            background-color: #4F46E5;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
-        }
-
-    .link-accent {
-        color: var(--accent);
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-        .link-accent:hover {
-            text-decoration: underline;
-            color: #E11D48;
-        }
 </style>
 
-<div class="container py-5 min-vh-100 d-flex align-items-center justify-content-center">
-    <div class="col-lg-7 col-xl-6">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card signup-card p-4 p-md-5">
 
-        <div class="card signup-card bg-white p-4 p-md-5">
-
-            <div class="text-center mb-4">
-                <div class="brand-icon-circle">
-                    <i class="bi bi-person-plus-fill"></i>
+                <div class="text-center mb-4">
+                    <div class="brand-icon"><i class="bi bi-rocket-takeoff-fill"></i></div>
+                    <h3 class="fw-bold">Get Started</h3>
+                    <p class="text-muted">Create your TaskZIP account in seconds.</p>
                 </div>
-                <h3 class="fw-bold text-dark">Create Account</h3>
-                <p class="text-muted small">Join your team on TaskZIP Project Management.</p>
-            </div>
 
-            @if (ViewBag.InsertMessage != null)
-            {
-                <div class="alert alert-info border-0 shadow-sm text-center">
-                    @Html.Raw(ViewBag.InsertMessage)
-                </div>
-            }
+                @* PROPER VISIBLE MESSAGES *@
+                @if (ViewBag.InsertMessage != null)
+                {
+                    // Check if message contains 'Successfully' to determine color
+                    var isSuccess = ViewBag.InsertMessage.ToString().Contains("Successfully");
+                    <div class="alert @(isSuccess ? "alert-success" : "alert-danger") status-msg shadow-sm mb-4 d-flex align-items-center">
+                        <i class="bi @(isSuccess ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill") me-2"></i>
+                        @Html.Raw(ViewBag.InsertMessage.ToString().Replace("<script>alert('", "").Replace("')</script>", ""))
+                    </div>
+                }
 
-            @using (Html.BeginForm("SignUp", "Signup_Login", FormMethod.Post, new { id = "signupForm" }))
-            {
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+                @using (Html.BeginForm("SignUp", "Signup_Login", FormMethod.Post, new { id = "signupForm", autocomplete = "off" }))
+                {
+                    @Html.AntiForgeryToken()
 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label small fw-bold text-muted text-uppercase">First Name</label>
-                        <div class="input-group">
-                            <span class="input-group-text rounded-start-3"><i class="bi bi-person"></i></span>
-                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control rounded-end-3", placeholder = "John" })
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-uppercase">First Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "Jane" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-uppercase">Last Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = "Doe" })
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label small fw-bold text-muted text-uppercase">Last Name</label>
-                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control rounded-3", placeholder = "Doe" })
-                    </div>
-                </div>
 
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label small fw-bold text-muted text-uppercase">Gender</label>
-                        @Html.DropDownListFor(m => m.Gender,
-                            new List<SelectListItem>
-                            {
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-uppercase">Gender</label>
+                            @Html.DropDownListFor(m => m.Gender, new List<SelectListItem> {
                                 new SelectListItem { Text = "Male", Value = "Male" },
-                                new SelectListItem { Text = "Female", Value = "Female" },
-                                new SelectListItem { Text = "Other", Value = "Other" }
-                            },
-                            "Select Gender",
-                            new { @class = "form-select rounded-3" })
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label small fw-bold text-muted text-uppercase">Role</label>
-                        @Html.DropDownListFor(m => m.Role,
-                            new List<SelectListItem>
-                            {
-                                new SelectListItem { Text = "Admin", Value = "Admin" },
+                                new SelectListItem { Text = "Female", Value = "Female" }
+                            }, "Select Gender", new { @class = "form-select" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-uppercase">Access Level</label>
+                            @Html.DropDownListFor(m => m.Role, new List<SelectListItem> {
                                 new SelectListItem { Text = "Project Manager", Value = "Manager" },
-                                new SelectListItem { Text = "User", Value = "User" }
-                            },
-                            "Select Role",
-                            new { @class = "form-select rounded-3" })
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted text-uppercase">Email Address</label>
-                    <div class="input-group">
-                        <span class="input-group-text rounded-start-3"><i class="bi bi-envelope"></i></span>
-                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control rounded-end-3", type = "email", placeholder = "name@company.com" })
-                    </div>
-                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small mt-1" })
-                </div>
-
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label small fw-bold text-muted text-uppercase">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text rounded-start-3"><i class="bi bi-lock"></i></span>
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control rounded-end-3", placeholder = "••••••", id = "Password" })
+                                new SelectListItem { Text = "Team Member", Value = "User" }
+                            }, "Select Role", new { @class = "form-select" })
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label small fw-bold text-muted text-uppercase">Confirm Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text rounded-start-3"><i class="bi bi-shield-check"></i></span>
-                            <input type="password" id="ConfirmPassword" class="form-control rounded-end-3" placeholder="••••••" />
-                        </div>
-                        <small id="passwordError" class="text-danger d-none fw-bold mt-1">
-                            <i class="bi bi-exclamation-circle-fill"></i> Passwords do not match
-                        </small>
-                    </div>
-                </div>
 
-                <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-brand rounded-pill shadow-sm">
-                        Create Account
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-uppercase">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "jane@example.com", id = "Email" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small fw-bold mt-1" })
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-uppercase">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "••••••", id = "Password" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-uppercase">Confirm</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                                <input type="password" id="ConfirmPassword" class="form-control" placeholder="••••••" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="passwordError" class="alert alert-warning py-2 d-none small mb-4">
+                        <i class="bi bi-exclamation-circle-fill me-1"></i> Passwords do not match.
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-sm border-0" style="background: var(--primary);">
+                        Create Free Account
                     </button>
+                }
+
+                <div class="text-center mt-4">
+                    <p class="small text-muted">
+                        Already have an account?
+                        @Html.ActionLink("Log in", "Login", "Signup_Login", null, new { @class = "text-primary fw-bold text-decoration-none" })
+                    </p>
                 </div>
-            }
-
-            <div class="text-center mt-4 pt-3 border-top">
-                <p class="small text-muted mb-0">
-                    Already have an account?
-                    @Html.ActionLink("Login here", "Login", "Signup_Login", null, new { @class = "link-accent" })
-                </p>
             </div>
-
         </div>
     </div>
 </div>
 
 @section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
     <script>
-        document.getElementById("signupForm").addEventListener("submit", function (e) {
-            var password = document.getElementById("Password").value;
-            var confirmPassword = document.getElementById("ConfirmPassword").value;
-            var error = document.getElementById("passwordError");
-            var confirmInput = document.getElementById("ConfirmPassword");
+        $(document).ready(function () {
+            // 1. Lowercase Email Force
+            $('#Email').on('input', function () {
+                this.value = this.value.toLowerCase();
+            });
 
-            if (password !== confirmPassword) {
-                e.preventDefault();
-                error.classList.remove("d-none");
-                confirmInput.classList.add("is-invalid"); // Bootstrap invalid state
-                confirmInput.focus();
-            } else {
-                error.classList.add("d-none");
-                confirmInput.classList.remove("is-invalid");
-            }
+            // 2. Real-time Match Check
+            $('#ConfirmPassword, #Password').on('keyup', function () {
+                let pass = $('#Password').val();
+                let conf = $('#ConfirmPassword').val();
+
+                if (conf.length > 0 && pass !== conf) {
+                    $('#passwordError').removeClass('d-none');
+                    $('#ConfirmPassword').addClass('is-invalid');
+                } else {
+                    $('#passwordError').addClass('d-none');
+                    $('#ConfirmPassword').removeClass('is-invalid').addClass('is-valid');
+                }
+            });
+
+            // 3. Form Prevention
+            $('#signupForm').on('submit', function (e) {
+                if ($('#Password').val() !== $('#ConfirmPassword').val()) {
+                    e.preventDefault();
+                    $('#passwordError').removeClass('d-none');
+                }
+            });
         });
     </script>
-
-    @Scripts.Render("~/bundles/jqueryval")
 }
