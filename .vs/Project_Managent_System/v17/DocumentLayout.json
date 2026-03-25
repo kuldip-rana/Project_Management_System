@@ -3,8 +3,32 @@
   "WorkspaceRootPath": "D:\\VisualStudioProjects\\Project_Managent_System\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|d:\\visualstudioprojects\\project_managent_system\\project_managent_system\\views\\user_profiles\\myprofile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|solutionrelative:project_managent_system\\views\\user_profiles\\myprofile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|D:\\VisualStudioProjects\\Project_Managent_System\\project_managent_system\\controllers\\user_profilescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|solutionrelative:project_managent_system\\controllers\\user_profilescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|D:\\VisualStudioProjects\\Project_Managent_System\\project_managent_system\\controllers\\signup_logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|solutionrelative:project_managent_system\\controllers\\signup_logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|D:\\VisualStudioProjects\\Project_Managent_System\\project_managent_system\\models\\user_profiles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|solutionrelative:project_managent_system\\models\\user_profiles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|D:\\VisualStudioProjects\\Project_Managent_System\\project_managent_system\\viewmodels\\user_profiles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|solutionrelative:project_managent_system\\viewmodels\\user_profiles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|D:\\VisualStudioProjects\\Project_Managent_System\\project_managent_system\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|solutionrelative:project_managent_system\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|D:\\VisualStudioProjects\\Project_Managent_System\\project_managent_system\\models\\model1.edmx||{C99AEA30-8E36-4515-B76F-496F5A48A6AA}|",
+      "RelativeMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|solutionrelative:project_managent_system\\models\\model1.edmx||{C99AEA30-8E36-4515-B76F-496F5A48A6AA}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|D:\\VisualStudioProjects\\Project_Managent_System\\project_managent_system\\views\\calender\\calendar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -17,10 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|D:\\VisualStudioProjects\\Project_Managent_System\\project_managent_system\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|solutionrelative:project_managent_system\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|D:\\VisualStudioProjects\\Project_Managent_System\\project_managent_system\\controllers\\signup_logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|solutionrelative:project_managent_system\\controllers\\signup_logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{533B946F-FF6E-4132-A265-D28B86F7242F}|Project_Managent_System\\Project_Managent_System.csproj|D:\\VisualStudioProjects\\Project_Managent_System\\project_managent_system\\views\\home\\contact.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -54,17 +74,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 11,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "Signup_LoginController.cs",
               "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Controllers\\Signup_LoginController.cs",
               "RelativeDocumentMoniker": "Project_Managent_System\\Controllers\\Signup_LoginController.cs",
               "ToolTip": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Controllers\\Signup_LoginController.cs",
               "RelativeToolTip": "Project_Managent_System\\Controllers\\Signup_LoginController.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAkwEEAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-28T05:20:41.193Z",
               "IsPinned": true
@@ -75,7 +95,67 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
+              "Title": "User_Profiles.cs",
+              "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Models\\User_Profiles.cs",
+              "RelativeDocumentMoniker": "Project_Managent_System\\Models\\User_Profiles.cs",
+              "ToolTip": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Models\\User_Profiles.cs",
+              "RelativeToolTip": "Project_Managent_System\\Models\\User_Profiles.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAxwCMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T05:43:01.034Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MyProfile.cshtml",
+              "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Views\\User_Profiles\\MyProfile.cshtml",
+              "RelativeDocumentMoniker": "Project_Managent_System\\Views\\User_Profiles\\MyProfile.cshtml",
+              "ToolTip": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Views\\User_Profiles\\MyProfile.cshtml",
+              "RelativeToolTip": "Project_Managent_System\\Views\\User_Profiles\\MyProfile.cshtml",
+              "ViewState": "AgIAAM0AAAAAAAAAAAAmwOAAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-25T05:38:23.641Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "user_profiles.cs",
+              "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\ViewModels\\user_profiles.cs",
+              "RelativeDocumentMoniker": "Project_Managent_System\\ViewModels\\user_profiles.cs",
+              "ToolTip": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\ViewModels\\user_profiles.cs",
+              "RelativeToolTip": "Project_Managent_System\\ViewModels\\user_profiles.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAYwBkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T05:33:55.521Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "User_ProfilesController.cs",
+              "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Controllers\\User_ProfilesController.cs",
+              "RelativeDocumentMoniker": "Project_Managent_System\\Controllers\\User_ProfilesController.cs",
+              "ToolTip": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Controllers\\User_ProfilesController.cs",
+              "RelativeToolTip": "Project_Managent_System\\Controllers\\User_ProfilesController.cs",
+              "ViewState": "AgIAAHIAAAAAAAAAAAAYwEoAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T05:31:57.441Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Model1.edmx [Diagram1]",
+              "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Models\\Model1.edmx",
+              "RelativeDocumentMoniker": "Project_Managent_System\\Models\\Model1.edmx",
+              "ToolTip": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Models\\Model1.edmx [Diagram1]",
+              "RelativeToolTip": "Project_Managent_System\\Models\\Model1.edmx [Diagram1]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001116|",
+              "WhenOpened": "2026-03-25T05:29:15.537Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "Contact.cshtml",
               "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Views\\Home\\Contact.cshtml",
               "RelativeDocumentMoniker": "Project_Managent_System\\Views\\Home\\Contact.cshtml",
@@ -87,7 +167,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 11,
               "Title": "About.cshtml",
               "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Views\\Home\\About.cshtml",
               "RelativeDocumentMoniker": "Project_Managent_System\\Views\\Home\\About.cshtml",
@@ -99,7 +179,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 12,
               "Title": "HomeController.cs",
               "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "Project_Managent_System\\Controllers\\HomeController.cs",
@@ -111,7 +191,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 13,
               "Title": "Login.cshtml",
               "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Views\\Signup_Login\\Login.cshtml",
               "RelativeDocumentMoniker": "Project_Managent_System\\Views\\Signup_Login\\Login.cshtml",
@@ -119,12 +199,11 @@
               "RelativeToolTip": "Project_Managent_System\\Views\\Signup_Login\\Login.cshtml",
               "ViewState": "AgIAAKoAAAAAAAAAAAAYwLwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-03-19T21:59:05.63Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-19T21:59:05.63Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 8,
               "Title": "Project.cs",
               "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Models\\Project.cs",
               "RelativeDocumentMoniker": "Project_Managent_System\\Models\\Project.cs",
@@ -136,7 +215,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 14,
               "Title": "Task.cs",
               "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Models\\Task.cs",
               "RelativeDocumentMoniker": "Project_Managent_System\\Models\\Task.cs",
@@ -148,7 +227,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 7,
               "Title": "Calendar.cshtml",
               "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Views\\Calender\\Calendar.cshtml",
               "RelativeDocumentMoniker": "Project_Managent_System\\Views\\Calender\\Calendar.cshtml",
@@ -156,12 +235,11 @@
               "RelativeToolTip": "Project_Managent_System\\Views\\Calender\\Calendar.cshtml",
               "ViewState": "AgIAAJcAAAAAAAAAAAAQwKIAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-03-16T04:55:19.258Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-16T04:55:19.258Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 9,
               "Title": "AdminController.cs",
               "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Controllers\\AdminController.cs",
               "RelativeDocumentMoniker": "Project_Managent_System\\Controllers\\AdminController.cs",
@@ -173,7 +251,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 15,
               "Title": "CalendarEventViewModel.cs",
               "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\ViewModels\\CalendarEventViewModel.cs",
               "RelativeDocumentMoniker": "Project_Managent_System\\ViewModels\\CalendarEventViewModel.cs",
@@ -185,16 +263,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "Project_Managent_System\\Views\\Shared\\_Layout.cshtml",
               "ToolTip": "D:\\VisualStudioProjects\\Project_Managent_System\\Project_Managent_System\\Views\\Shared\\_Layout.cshtml",
               "RelativeToolTip": "Project_Managent_System\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAO0AAAAAAAAAAAAmwP4AAAAPAAAAAAAAAA==",
+              "ViewState": "AgIAAP8AAAAAAAAAAAAmwBABAABRAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-03-10T05:23:35.63Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-10T05:23:35.63Z"
             }
           ]
         }

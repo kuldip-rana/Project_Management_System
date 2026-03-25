@@ -11,8 +11,7 @@ namespace Project_Managent_System.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.Web.Mvc;
-
+    
     public partial class Project
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -25,8 +24,6 @@ namespace Project_Managent_System.Models
     
         public int ProjectId { get; set; }
         public string ProjectName { get; set; }
-
-        [AllowHtml]
         public string Description { get; set; }
         public System.DateTime StartDate { get; set; }
         public System.DateTime EndDate { get; set; }

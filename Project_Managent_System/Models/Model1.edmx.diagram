@@ -21,6 +21,8 @@
         <AssociationConnector Association="PMS_DatabaseModel.FK_Comments_Project" />
         <AssociationConnector Association="PMS_DatabaseModel.FK_Comments_Task" />
         <AssociationConnector Association="PMS_DatabaseModel.FK_Comments_Users" />
+        <EntityTypeShape EntityType="PMS_DatabaseModel.User_Profiles" Width="1.5" PointX="3.125" PointY="6.375" />
+        <AssociationConnector Association="PMS_DatabaseModel.FK_UserProfile_MainUsers" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

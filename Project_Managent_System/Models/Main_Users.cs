@@ -21,6 +21,7 @@ namespace Project_Managent_System.Models
             this.Task_Assignments = new HashSet<Task_Assignments>();
             this.Tasks = new HashSet<Task>();
             this.Comments = new HashSet<Comment>();
+            this.User_Profiles = new HashSet<User_Profiles>();
         }
     
         public int Id { get; set; }
@@ -39,5 +40,7 @@ namespace Project_Managent_System.Models
         public virtual ICollection<Task> Tasks { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Comment> Comments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<User_Profiles> User_Profiles { get; set; }
     }
 }

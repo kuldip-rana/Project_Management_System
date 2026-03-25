@@ -70,6 +70,26 @@
     <Property Name="CreatedAt" Type="datetime" Nullable="false" />
     <Property Name="UpdatedAt" Type="datetime" Nullable="false" />
   </EntityType>
+  <EntityType Name="User_Profiles">
+    <Key>
+      <PropertyRef Name="ProfileId" />
+    </Key>
+    <Property Name="ProfileId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="EmployeeId" Type="nvarchar" MaxLength="50" />
+    <Property Name="Department" Type="nvarchar" MaxLength="100" />
+    <Property Name="Designation" Type="nvarchar" MaxLength="100" />
+    <Property Name="JoiningDate" Type="date" />
+    <Property Name="GitHubUrl" Type="nvarchar" MaxLength="255" />
+    <Property Name="LinkedInUrl" Type="nvarchar" MaxLength="255" />
+    <Property Name="PortfolioUrl" Type="nvarchar" MaxLength="255" />
+    <Property Name="TwitterUrl" Type="nvarchar" MaxLength="255" />
+    <Property Name="Bio" Type="nvarchar" MaxLength="1000" />
+    <Property Name="Skills" Type="nvarchar(max)" />
+    <Property Name="ProfilePicturePath" Type="nvarchar(max)" />
+    <Property Name="PhoneNumber" Type="nvarchar" MaxLength="20" />
+    <Property Name="LastUpdated" Type="datetime" />
+  </EntityType>
   <Association Name="FK_Comments_Project">
     <End Role="Projects" Type="Self.Projects" Multiplicity="0..1" />
     <End Role="Comments" Type="Self.Comments" Multiplicity="*" />
@@ -178,6 +198,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_UserProfile_MainUsers">
+    <End Role="Main_Users" Type="Self.Main_Users" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="User_Profiles" Type="Self.User_Profiles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Main_Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User_Profiles">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <EntityContainer Name="PMS_DatabaseModelStoreContainer">
     <EntitySet Name="Comments" EntityType="Self.Comments" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Main_Users" EntityType="Self.Main_Users" Schema="dbo" store:Type="Tables" />
@@ -185,6 +219,7 @@
     <EntitySet Name="ProjectUser" EntityType="Self.ProjectUser" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Task_Assignments" EntityType="Self.Task_Assignments" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Tasks" EntityType="Self.Tasks" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="User_Profiles" EntityType="Self.User_Profiles" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_Comments_Project" Association="Self.FK_Comments_Project">
       <End Role="Projects" EntitySet="Projects" />
       <End Role="Comments" EntitySet="Comments" />
@@ -220,6 +255,10 @@
     <AssociationSet Name="FK_Tasks_manager_" Association="Self.FK_Tasks_manager_">
       <End Role="Main_Users" EntitySet="Main_Users" />
       <End Role="Tasks" EntitySet="Tasks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserProfile_MainUsers" Association="Self.FK_UserProfile_MainUsers">
+      <End Role="Main_Users" EntitySet="Main_Users" />
+      <End Role="User_Profiles" EntitySet="User_Profiles" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

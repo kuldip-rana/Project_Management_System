@@ -75,6 +75,26 @@
           <Property Name="CreatedAt" Type="datetime" Nullable="false" />
           <Property Name="UpdatedAt" Type="datetime" Nullable="false" />
         </EntityType>
+        <EntityType Name="User_Profiles">
+          <Key>
+            <PropertyRef Name="ProfileId" />
+          </Key>
+          <Property Name="ProfileId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="EmployeeId" Type="nvarchar" MaxLength="50" />
+          <Property Name="Department" Type="nvarchar" MaxLength="100" />
+          <Property Name="Designation" Type="nvarchar" MaxLength="100" />
+          <Property Name="JoiningDate" Type="date" />
+          <Property Name="GitHubUrl" Type="nvarchar" MaxLength="255" />
+          <Property Name="LinkedInUrl" Type="nvarchar" MaxLength="255" />
+          <Property Name="PortfolioUrl" Type="nvarchar" MaxLength="255" />
+          <Property Name="TwitterUrl" Type="nvarchar" MaxLength="255" />
+          <Property Name="Bio" Type="nvarchar" MaxLength="1000" />
+          <Property Name="Skills" Type="nvarchar(max)" />
+          <Property Name="ProfilePicturePath" Type="nvarchar(max)" />
+          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="20" />
+          <Property Name="LastUpdated" Type="datetime" />
+        </EntityType>
         <Association Name="FK_Comments_Project">
           <End Role="Projects" Type="Self.Projects" Multiplicity="0..1" />
           <End Role="Comments" Type="Self.Comments" Multiplicity="*" />
@@ -183,6 +203,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserProfile_MainUsers">
+          <End Role="Main_Users" Type="Self.Main_Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="User_Profiles" Type="Self.User_Profiles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Main_Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="User_Profiles">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="PMS_DatabaseModelStoreContainer">
           <EntitySet Name="Comments" EntityType="Self.Comments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Main_Users" EntityType="Self.Main_Users" Schema="dbo" store:Type="Tables" />
@@ -190,6 +224,7 @@
           <EntitySet Name="ProjectUser" EntityType="Self.ProjectUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Task_Assignments" EntityType="Self.Task_Assignments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tasks" EntityType="Self.Tasks" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User_Profiles" EntityType="Self.User_Profiles" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Comments_Project" Association="Self.FK_Comments_Project">
             <End Role="Projects" EntitySet="Projects" />
             <End Role="Comments" EntitySet="Comments" />
@@ -226,6 +261,10 @@
             <End Role="Main_Users" EntitySet="Main_Users" />
             <End Role="Tasks" EntitySet="Tasks" />
           </AssociationSet>
+          <AssociationSet Name="FK_UserProfile_MainUsers" Association="Self.FK_UserProfile_MainUsers">
+            <End Role="Main_Users" EntitySet="Main_Users" />
+            <End Role="User_Profiles" EntitySet="User_Profiles" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -246,6 +285,7 @@
           <NavigationProperty Name="Task_Assignments" Relationship="PMS_DatabaseModel.FK_TaskAssignments_User" FromRole="Main_Users" ToRole="Task_Assignments" />
           <NavigationProperty Name="Tasks" Relationship="PMS_DatabaseModel.FK_Tasks_manager_" FromRole="Main_Users" ToRole="Task" />
           <NavigationProperty Name="Comments" Relationship="PMS_DatabaseModel.FK_Comments_Users" FromRole="Main_Users" ToRole="Comment" />
+          <NavigationProperty Name="User_Profiles" Relationship="PMS_DatabaseModel.FK_UserProfile_MainUsers" FromRole="Main_Users" ToRole="User_Profiles" />
         </EntityType>
         <EntityContainer Name="PMS_DatabaseEntities2" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Main_Users" EntityType="Self.Main_Users" />
@@ -289,6 +329,11 @@
           <AssociationSet Name="FK_Comments_Users" Association="PMS_DatabaseModel.FK_Comments_Users">
             <End Role="Main_Users" EntitySet="Main_Users" />
             <End Role="Comment" EntitySet="Comments" />
+          </AssociationSet>
+          <EntitySet Name="User_Profiles" EntityType="PMS_DatabaseModel.User_Profiles" />
+          <AssociationSet Name="FK_UserProfile_MainUsers" Association="PMS_DatabaseModel.FK_UserProfile_MainUsers">
+            <End Role="Main_Users" EntitySet="Main_Users" />
+            <End Role="User_Profiles" EntitySet="User_Profiles" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Project">
@@ -471,6 +516,41 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="User_Profiles">
+          <Key>
+            <PropertyRef Name="ProfileId" />
+          </Key>
+          <Property Name="ProfileId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="EmployeeId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Department" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Designation" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="JoiningDate" Type="DateTime" Precision="0" />
+          <Property Name="GitHubUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="LinkedInUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="PortfolioUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TwitterUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Bio" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Skills" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProfilePicturePath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Main_Users" Relationship="PMS_DatabaseModel.FK_UserProfile_MainUsers" FromRole="User_Profiles" ToRole="Main_Users" />
+        </EntityType>
+        <Association Name="FK_UserProfile_MainUsers">
+          <End Type="PMS_DatabaseModel.Main_Users" Role="Main_Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="PMS_DatabaseModel.User_Profiles" Role="User_Profiles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Main_Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="User_Profiles">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -550,6 +630,27 @@
                 <ScalarProperty Name="TaskId" ColumnName="TaskId" />
                 <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
                 <ScalarProperty Name="CommentId" ColumnName="CommentId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User_Profiles">
+            <EntityTypeMapping TypeName="PMS_DatabaseModel.User_Profiles">
+              <MappingFragment StoreEntitySet="User_Profiles">
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="ProfilePicturePath" ColumnName="ProfilePicturePath" />
+                <ScalarProperty Name="Skills" ColumnName="Skills" />
+                <ScalarProperty Name="Bio" ColumnName="Bio" />
+                <ScalarProperty Name="TwitterUrl" ColumnName="TwitterUrl" />
+                <ScalarProperty Name="PortfolioUrl" ColumnName="PortfolioUrl" />
+                <ScalarProperty Name="LinkedInUrl" ColumnName="LinkedInUrl" />
+                <ScalarProperty Name="GitHubUrl" ColumnName="GitHubUrl" />
+                <ScalarProperty Name="JoiningDate" ColumnName="JoiningDate" />
+                <ScalarProperty Name="Designation" ColumnName="Designation" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

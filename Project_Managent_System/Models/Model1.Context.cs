@@ -31,5 +31,6 @@ namespace Project_Managent_System.Models
         public virtual DbSet<Task_Assignments> Task_Assignments { get; set; }
         public virtual DbSet<Task> Tasks { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<User_Profiles> User_Profiles { get; set; }
     }
 }
